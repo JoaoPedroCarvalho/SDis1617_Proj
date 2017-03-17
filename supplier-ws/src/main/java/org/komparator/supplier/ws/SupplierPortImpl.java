@@ -10,16 +10,15 @@ import org.komparator.supplier.domain.Purchase;
 import org.komparator.supplier.domain.QuantityException;
 import org.komparator.supplier.domain.Supplier;
 
-// TODO
-//@WebService(
-//		endpointInterface = "org.komparator.supplier.ws.SupplierPortType", 
-//		wsdlLocation = "...", 
-//		name = "SupplierWebService", 
-//		portName = "...Port", 
-//		targetNamespace = "...", 
-//		serviceName = "...Service"
-//)
-public class SupplierPortImpl { // implements SupplierPortType {
+@WebService(
+		endpointInterface = "org.komparator.supplier.ws.SupplierPortType", 
+		wsdlLocation = "supplier.wsdl", 
+		name = "SupplierWebService", 
+		portName = "SupplierPort", 
+		targetNamespace = "http://ws.supplier.komparator.org/", 
+		serviceName = "SupplierService"
+)
+public class SupplierPortImpl implements SupplierPortType {
 
 	// end point manager
 	private SupplierEndpointManager endpointManager;
