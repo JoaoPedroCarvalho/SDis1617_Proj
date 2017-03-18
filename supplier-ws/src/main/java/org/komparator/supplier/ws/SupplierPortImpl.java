@@ -51,14 +51,14 @@ public class SupplierPortImpl implements SupplierPortType {
 
 	public List<ProductView> searchProducts(String descText) throws BadText_Exception {
 		// arg verification
+		if (descText==null){
+			throwBadText("Search string cannot be null!");
+		}
 		if (descText.contains(" ")){
 			throwBadText("Search string cannot contain spaces!");
 		}
-		if (descText==""){
+		if (descText.length() == 0){
 			throwBadText("Search string cannot be empty!");
-		}
-		if (descText==null){
-			throwBadText("Search string cannot be null!");
 		}
 		
 		// core	
