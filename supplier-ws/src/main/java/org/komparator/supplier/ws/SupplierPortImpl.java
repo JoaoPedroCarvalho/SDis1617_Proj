@@ -50,18 +50,24 @@ public class SupplierPortImpl implements SupplierPortType {
 	}
 
 	public List<ProductView> searchProducts(String descText) throws BadText_Exception {
-		// arg verification
-		// TODO
+		// TODO: arg verification
+		
 		// cenas	
 		Supplier supplier = Supplier.getInstance();
+		List<ProductView> searchResult = new ArrayList<ProductView>();
 		for (String productId : supplier.getProductsIDs()){
 			Product product = supplier.getProduct(productId);
-			String description = product.getDescription();
-			
+			String description = product.getDescription();			
+			if(description.toLowerCase().contains(descText.toLowerCase())){
+				ProductView validProduct = new ProductView();
+				validProduct.setId(productId);
+				validProduct.setPrice(product.getPrice());
+				validProduct.setQuantity(product.getQuantity());
+				validProduct.setDesc(description);
+				searchResult.add(validProduct);
+			}			
 		}
-		
-		
-		return null;
+		return searchResult;
 	}
 
 	public String buyProduct(String productId, int quantity)
