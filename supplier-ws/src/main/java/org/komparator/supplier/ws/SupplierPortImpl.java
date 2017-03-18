@@ -61,12 +61,7 @@ public class SupplierPortImpl implements SupplierPortType {
 			Product product = supplier.getProduct(productId);
 			String description = product.getDescription();
 			if (description.toLowerCase().contains(descText.toLowerCase())) {
-				ProductView validProduct = new ProductView();
-				validProduct.setId(productId);
-				validProduct.setPrice(product.getPrice());
-				validProduct.setQuantity(product.getQuantity());
-				validProduct.setDesc(description);
-				searchResult.add(validProduct);
+				searchResult.add(newProductView(product));
 			}
 		}
 		return searchResult;
