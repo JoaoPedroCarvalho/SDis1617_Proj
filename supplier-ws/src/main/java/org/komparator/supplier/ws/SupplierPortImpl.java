@@ -50,9 +50,15 @@ public class SupplierPortImpl implements SupplierPortType {
 	}
 
 	public List<ProductView> searchProducts(String descText) throws BadText_Exception {
-		// TODO: arg verification
+		// arg verification
+		if (descText.contains(" ")){
+			throwBadText("Search string cannot contain spaces!");
+		}
+		if (descText==""){
+			throwBadText("Search string cannot be empty!");
+		}
 		
-		// cenas	
+		// core	
 		Supplier supplier = Supplier.getInstance();
 		List<ProductView> searchResult = new ArrayList<ProductView>();
 		for (String productId : supplier.getProductsIDs()){
