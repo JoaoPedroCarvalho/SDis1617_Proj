@@ -1,7 +1,6 @@
 package org.komparator.supplier.ws.it;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -11,7 +10,10 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.komparator.supplier.ws.*;
+import org.komparator.supplier.ws.BadProductId_Exception;
+import org.komparator.supplier.ws.BadProduct_Exception;
+import org.komparator.supplier.ws.BadText_Exception;
+import org.komparator.supplier.ws.ProductView;
 
 /**
  * Test suite
@@ -79,7 +81,7 @@ public class SearchProductsIT extends BaseIT {
 	// BadText_Exception
 
 	// bad input tests
-	
+
 	@Test(expected = BadText_Exception.class)
 	public void searchProductsNullTest() throws BadText_Exception {
 		client.searchProducts(null);
@@ -108,16 +110,16 @@ public class SearchProductsIT extends BaseIT {
 	// main tests
 
 	@Test
-	public void searchProductssThatExistSingleTest() throws BadProductId_Exception, BadText_Exception{
+	public void searchProductssThatExistSingleTest() throws BadProductId_Exception, BadText_Exception {
 		List<ProductView> productsList = client.searchProducts("Basketball");
 		assertEquals("X1", productsList.get(0).getId());
 		assertEquals(10, productsList.get(0).getPrice());
 		assertEquals(10, productsList.get(0).getQuantity());
 		assertEquals("Basketball", productsList.get(0).getDesc());
 	}
-	
+
 	@Test
-	public void searchProductssThatExistMultipleTest() throws BadProductId_Exception, BadText_Exception{
+	public void searchProductssThatExistMultipleTest() throws BadProductId_Exception, BadText_Exception {
 		List<ProductView> productsList = client.searchProducts("ball");
 		assertEquals("X1", productsList.get(0).getId());
 		assertEquals(10, productsList.get(0).getPrice());
@@ -133,20 +135,20 @@ public class SearchProductsIT extends BaseIT {
 		assertEquals(30, productsList.get(0).getPrice());
 		assertEquals(30, productsList.get(0).getQuantity());
 		assertEquals("Soccer ball", productsList.get(0).getDesc());
-		
+
 	}
-	
+
 	@Test
-	public void searchProductssThatExistSingleNotCaseSensitiveTest() throws BadProductId_Exception, BadText_Exception{
+	public void searchProductssThatExistSingleNotCaseSensitiveTest() throws BadProductId_Exception, BadText_Exception {
 		List<ProductView> productsList = client.searchProducts("SoCcEr");
 		assertEquals("Z3", productsList.get(0).getId());
 		assertEquals(30, productsList.get(0).getPrice());
 		assertEquals(30, productsList.get(0).getQuantity());
 		assertEquals("Soccer ball", productsList.get(0).getDesc());
 	}
-	
+
 	@Test
-	public void searchProductssThatDoesNotExistTest() throws BadProductId_Exception, BadText_Exception{
+	public void searchProductssThatDoesNotExistTest() throws BadProductId_Exception, BadText_Exception {
 		List<ProductView> productsList = client.searchProducts("GolfBall");
 		assertTrue(productsList.isEmpty());
 	}

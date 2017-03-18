@@ -10,14 +10,7 @@ import org.komparator.supplier.domain.Purchase;
 import org.komparator.supplier.domain.QuantityException;
 import org.komparator.supplier.domain.Supplier;
 
-@WebService(
-		endpointInterface = "org.komparator.supplier.ws.SupplierPortType", 
-		wsdlLocation = "supplier.wsdl", 
-		name = "SupplierWebService", 
-		portName = "SupplierPort", 
-		targetNamespace = "http://ws.supplier.komparator.org/", 
-		serviceName = "SupplierService"
-)
+@WebService(endpointInterface = "org.komparator.supplier.ws.SupplierPortType", wsdlLocation = "supplier.wsdl", name = "SupplierWebService", portName = "SupplierPort", targetNamespace = "http://ws.supplier.komparator.org/", serviceName = "SupplierService")
 public class SupplierPortImpl implements SupplierPortType {
 
 	// end point manager
@@ -51,50 +44,51 @@ public class SupplierPortImpl implements SupplierPortType {
 
 	public List<ProductView> searchProducts(String descText) throws BadText_Exception {
 		// arg verification
-		if (descText==null){
+		if (descText == null) {
 			throwBadText("Search string cannot be null!");
 		}
-		if (descText.contains(" ")){
+		if (descText.contains(" ")) {
 			throwBadText("Search string cannot contain spaces!");
 		}
-		if (descText.length() == 0){
+		if (descText.length() == 0) {
 			throwBadText("Search string cannot be empty!");
 		}
-		
-		// core	
+
+		// core
 		Supplier supplier = Supplier.getInstance();
 		List<ProductView> searchResult = new ArrayList<ProductView>();
-		for (String productId : supplier.getProductsIDs()){
+		for (String productId : supplier.getProductsIDs()) {
 			Product product = supplier.getProduct(productId);
-			String description = product.getDescription();			
-			if(description.toLowerCase().contains(descText.toLowerCase())){
+			String description = product.getDescription();
+			if (description.toLowerCase().contains(descText.toLowerCase())) {
 				ProductView validProduct = new ProductView();
 				validProduct.setId(productId);
 				validProduct.setPrice(product.getPrice());
 				validProduct.setQuantity(product.getQuantity());
 				validProduct.setDesc(description);
 				searchResult.add(validProduct);
-			}			
+			}
 		}
 		return searchResult;
 	}
 
-	public String buyProduct(String productId, int quantity) throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
-		//arg verification
-		if (productId == null){
+	public String buyProduct(String productId, int quantity)
+			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
+		// arg verification
+		if (productId == null) {
 			throwBadProductId("Product identifier cannot be null!");
 		}
 		productId = productId.trim();
-		if (productId.length() == 0){
+		if (productId.length() == 0) {
 			throwBadProductId("Product identifier cannot be empty or whitespace!");
 		}
-		if (quantity<=0){
+		if (quantity <= 0) {
 			throwBadQuantity("Quantity cannot be zero or less!");
 		}
-		//core
+		// core
 		Supplier supplier = Supplier.getInstance();
 		Product product = supplier.getProduct(productId);
-		if (product.getQuantity()<quantity){
+		if (product.getQuantity() < quantity) {
 			throwInsufficientQuantity("Not enough quantity of selected product!");
 		}
 		try {
