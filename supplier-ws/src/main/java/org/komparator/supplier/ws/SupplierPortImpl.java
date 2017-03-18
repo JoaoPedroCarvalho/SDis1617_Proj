@@ -57,6 +57,9 @@ public class SupplierPortImpl implements SupplierPortType {
 		if (descText==""){
 			throwBadText("Search string cannot be empty!");
 		}
+		if (descText==null){
+			throwBadText("Search string cannot be null!");
+		}
 		
 		// core	
 		Supplier supplier = Supplier.getInstance();
