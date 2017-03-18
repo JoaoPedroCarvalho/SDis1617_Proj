@@ -43,24 +43,26 @@ public class SupplierPortImpl implements SupplierPortType {
 	}
 
 	public List<ProductView> searchProducts(String descText) throws BadText_Exception {
-		// arg verification
+		// Arguments verification
 		if (descText == null) {
 			throwBadText("Search string cannot be null!");
+		}
+		descText = descText.trim();
+		if (descText.length() == 0) {
+			throwBadText("Search string cannot be empty!");
 		}
 		if (descText.contains(" ")) {
 			throwBadText("Search string cannot contain spaces!");
 		}
-		if (descText.length() == 0) {
-			throwBadText("Search string cannot be empty!");
-		}
-
 		// core
 		Supplier supplier = Supplier.getInstance();
 		List<ProductView> searchResult = new ArrayList<ProductView>();
 		for (String productId : supplier.getProductsIDs()) {
+			// Iterate through list of products
 			Product product = supplier.getProduct(productId);
 			String description = product.getDescription();
 			if (description.toLowerCase().contains(descText.toLowerCase())) {
+				// Located product with matching description
 				searchResult.add(newProductView(product));
 			}
 		}
@@ -69,7 +71,7 @@ public class SupplierPortImpl implements SupplierPortType {
 
 	public String buyProduct(String productId, int quantity)
 			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
-		// arg verification
+		// Arguments verification
 		if (productId == null) {
 			throwBadProductId("Product identifier cannot be null!");
 		}
@@ -83,7 +85,12 @@ public class SupplierPortImpl implements SupplierPortType {
 		// core
 		Supplier supplier = Supplier.getInstance();
 		Product product = supplier.getProduct(productId);
+		if (product == null) {
+			// Checks if PId exists
+			throwBadProductId("Product identifier provided does not exist!");
+		}
 		if (product.getQuantity() < quantity) {
+			// Check if exists enough
 			throwInsufficientQuantity("Not enough quantity of selected product!");
 		}
 		try {

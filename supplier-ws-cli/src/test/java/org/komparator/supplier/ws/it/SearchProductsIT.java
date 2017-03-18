@@ -96,6 +96,11 @@ public class SearchProductsIT extends BaseIT {
 	public void searchProductsWhitespaceTest() throws BadText_Exception {
 		client.searchProducts(" ");
 	}
+	
+	@Test(expected = BadText_Exception.class)
+	public void searchProductsWithSpacesTest() throws BadText_Exception {
+		client.searchProducts("Word1 Word2");
+	}
 
 	@Test(expected = BadText_Exception.class)
 	public void searchProductsTabTest() throws BadText_Exception {

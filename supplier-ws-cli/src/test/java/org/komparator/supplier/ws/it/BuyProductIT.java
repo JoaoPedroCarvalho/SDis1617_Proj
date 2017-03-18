@@ -112,6 +112,12 @@ public class BuyProductIT extends BaseIT {
 			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
 		client.buyProduct("X1", 100);
 	}
+	
+	@Test(expected = BadProductId_Exception.class)
+	public void buyProductUnknownProduct()
+			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
+		client.buyProduct("GG", 10);
+	}
 	// main tests
 
 	@Test
