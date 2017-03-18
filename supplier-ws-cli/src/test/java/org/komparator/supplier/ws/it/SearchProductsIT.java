@@ -81,34 +81,34 @@ public class SearchProductsIT extends BaseIT {
 	// bad input tests
 	
 	@Test(expected = BadText_Exception.class)
-	public void getProductNullTest() throws BadText_Exception {
+	public void searchProductsNullTest() throws BadText_Exception {
 		client.searchProducts(null);
 	}
 
 	@Test(expected = BadText_Exception.class)
-	public void getProductEmptyTest() throws BadText_Exception {
+	public void searchProductsEmptyTest() throws BadText_Exception {
 		client.searchProducts("");
 	}
 
 	@Test(expected = BadText_Exception.class)
-	public void getProductWhitespaceTest() throws BadText_Exception {
+	public void searchProductsWhitespaceTest() throws BadText_Exception {
 		client.searchProducts(" ");
 	}
 
 	@Test(expected = BadText_Exception.class)
-	public void getProductTabTest() throws BadText_Exception {
+	public void searchProductsTabTest() throws BadText_Exception {
 		client.searchProducts("\t");
 	}
 
 	@Test(expected = BadText_Exception.class)
-	public void getProductNewlineTest() throws BadText_Exception {
+	public void searchProductsNewlineTest() throws BadText_Exception {
 		client.searchProducts("\n");
 	}
 
 	// main tests
 
 	@Test
-	public void getProductsThatExistSingleTest() throws BadProductId_Exception, BadText_Exception{
+	public void searchProductssThatExistSingleTest() throws BadProductId_Exception, BadText_Exception{
 		List<ProductView> productsList = client.searchProducts("Basketball");
 		assertEquals("X1", productsList.get(0).getId());
 		assertEquals(10, productsList.get(0).getPrice());
@@ -117,7 +117,7 @@ public class SearchProductsIT extends BaseIT {
 	}
 	
 	@Test
-	public void getProductsThatExistMultipleTest() throws BadProductId_Exception, BadText_Exception{
+	public void searchProductssThatExistMultipleTest() throws BadProductId_Exception, BadText_Exception{
 		List<ProductView> productsList = client.searchProducts("ball");
 		assertEquals("X1", productsList.get(0).getId());
 		assertEquals(10, productsList.get(0).getPrice());
@@ -137,7 +137,7 @@ public class SearchProductsIT extends BaseIT {
 	}
 	
 	@Test
-	public void getProductsThatExistSingleNotCaseSensitiveTest() throws BadProductId_Exception, BadText_Exception{
+	public void searchProductssThatExistSingleNotCaseSensitiveTest() throws BadProductId_Exception, BadText_Exception{
 		List<ProductView> productsList = client.searchProducts("SoCcEr");
 		assertEquals("Z3", productsList.get(0).getId());
 		assertEquals(30, productsList.get(0).getPrice());
@@ -146,7 +146,7 @@ public class SearchProductsIT extends BaseIT {
 	}
 	
 	@Test
-	public void getProductsThatDoesNotExistTest() throws BadProductId_Exception, BadText_Exception{
+	public void searchProductssThatDoesNotExistTest() throws BadProductId_Exception, BadText_Exception{
 		List<ProductView> productsList = client.searchProducts("GolfBall");
 		assertTrue(productsList.isEmpty());
 	}
