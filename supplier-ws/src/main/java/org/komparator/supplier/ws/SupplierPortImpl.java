@@ -51,9 +51,6 @@ public class SupplierPortImpl implements SupplierPortType {
 		if (descText.length() == 0) {
 			throwBadText("Search string cannot be empty!");
 		}
-		if (descText.contains(" ")) {
-			throwBadText("Search string cannot contain spaces!");
-		}
 		// core
 		Supplier supplier = Supplier.getInstance();
 		List<ProductView> searchResult = new ArrayList<ProductView>();
@@ -61,7 +58,7 @@ public class SupplierPortImpl implements SupplierPortType {
 			// Iterate through list of products
 			Product product = supplier.getProduct(productId);
 			String description = product.getDescription();
-			if (description.toLowerCase().contains(descText.toLowerCase())) {
+			if (description.contains(descText)) {
 				// Located product with matching description
 				searchResult.add(newProductView(product));
 			}
