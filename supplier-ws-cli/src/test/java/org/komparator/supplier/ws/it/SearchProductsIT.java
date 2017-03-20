@@ -138,7 +138,7 @@ public class SearchProductsIT extends BaseIT {
 	public void searchProductsThatExistMultipleTest() throws BadText_Exception {
 		List<ProductView> productsList = client.searchProducts("ball");
 		assertEquals(5, productsList.size());
-		
+
 		assertEquals("X1", productsList.get(0).getId());
 		assertEquals(10, productsList.get(0).getPrice());
 		assertEquals(10, productsList.get(0).getQuantity());
@@ -148,7 +148,7 @@ public class SearchProductsIT extends BaseIT {
 		assertEquals(30, productsList.get(1).getPrice());
 		assertEquals(30, productsList.get(1).getQuantity());
 		assertEquals("Soccer ball", productsList.get(1).getDesc());
-		
+
 		assertEquals("Z4", productsList.get(2).getId());
 		assertEquals(30, productsList.get(2).getPrice());
 		assertEquals(30, productsList.get(2).getQuantity());
@@ -179,7 +179,7 @@ public class SearchProductsIT extends BaseIT {
 		assertEquals("Z4", productsList.get(0).getId());
 		assertEquals(30, productsList.get(0).getPrice());
 		assertEquals(30, productsList.get(0).getQuantity());
-		assertEquals("Red soccer ball", productsList.get(0).getDesc());		
+		assertEquals("Red soccer ball", productsList.get(0).getDesc());
 	}
 
 	@Test
@@ -191,7 +191,7 @@ public class SearchProductsIT extends BaseIT {
 		assertEquals(30, productsList.get(0).getPrice());
 		assertEquals(30, productsList.get(0).getQuantity());
 		assertEquals("Soccer ball", productsList.get(0).getDesc());
-		
+
 		assertEquals("Z5", productsList.get(1).getId());
 		assertEquals(30, productsList.get(1).getPrice());
 		assertEquals(30, productsList.get(1).getQuantity());
