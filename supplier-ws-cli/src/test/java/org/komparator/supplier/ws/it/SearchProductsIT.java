@@ -50,7 +50,7 @@ public class SearchProductsIT extends BaseIT {
 		{
 			ProductView product = new ProductView();
 			product.setId("Z4");
-			product.setDesc("Red Soccer ball");
+			product.setDesc("Red soccer ball");
 			product.setPrice(30);
 			product.setQuantity(30);
 			client.createProduct(product);
