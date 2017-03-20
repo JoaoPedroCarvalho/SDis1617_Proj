@@ -25,30 +25,28 @@ public class BuyProductIT extends BaseIT {
 	public static void oneTimeSetUp() throws BadProductId_Exception, BadProduct_Exception {
 		// clear remote service state before all tests
 		client.clear();
-
-		// fill-in test products
-		// (since getProduct is read-only the initialization below
-		// can be done once for all tests in this suite)
+		
+		// Populate supplier
 		{
 			ProductView product = new ProductView();
-			product.setId("X1");
-			product.setDesc("Basketball");
+			product.setId("Animal01");
+			product.setDesc("Bird");
 			product.setPrice(10);
 			product.setQuantity(10);
 			client.createProduct(product);
 		}
 		{
 			ProductView product = new ProductView();
-			product.setId("Y1");
-			product.setDesc("Basketball");
+			product.setId("Animal02");
+			product.setDesc("Fish");
 			product.setPrice(10);
 			product.setQuantity(10);
 			client.createProduct(product);
 		}
 		{
 			ProductView product = new ProductView();
-			product.setId("Z1");
-			product.setDesc("Basketball");
+			product.setId("Animal03");
+			product.setDesc("Turtoise");
 			product.setPrice(10);
 			product.setQuantity(10);
 			client.createProduct(product);
@@ -72,15 +70,9 @@ public class BuyProductIT extends BaseIT {
 	public void tearDown() {
 	}
 
-	// tests
-	// assertEquals(expected, actual);
+	// Tests
 
-	// public String buyProduct(String productId, int quantity)
-	// throws BadProductId_Exception, BadQuantity_Exception,
-	// InsufficientQuantity_Exception {
-
-	// bad input tests
-
+	// Invalid input tests
 	@Test(expected = BadProductId_Exception.class)
 	public void buyProductNullTest()
 			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
@@ -114,55 +106,56 @@ public class BuyProductIT extends BaseIT {
 	@Test(expected = BadQuantity_Exception.class)
 	public void buyProductNegativeQuantity()
 			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
-		client.buyProduct("X1", -5);
+		client.buyProduct("Animal01", -5);
 	}
 
 	@Test(expected = BadQuantity_Exception.class)
 	public void buyProductZeroQuantity()
 			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
-		client.buyProduct("X1", 0);
+		client.buyProduct("Animal01", 0);
 	}
-
+	
+	// Wrong input tests
 	@Test(expected = InsufficientQuantity_Exception.class)
 	public void buyProductTooMuchQuantity()
 			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
-		client.buyProduct("X1", 100);
+		client.buyProduct("Animal01", 100);
 	}
 
 	@Test(expected = BadProductId_Exception.class)
 	public void buyProductUnknownProduct()
 			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
-		client.buyProduct("GG", 10);
+		client.buyProduct("Planta01", 10);
 	}
-	// main tests
-
+	
+	// Valid input tests
 	@Test
 	public void buyProductMinQuantityTest()
 			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
-		ProductView product = client.getProduct("X1");
+		ProductView product = client.getProduct("Animal01");
 		int inicialQuantity = product.getQuantity();
-		client.buyProduct("X1", 1);
-		product = client.getProduct("X1");
+		client.buyProduct("Animal01", 1);
+		product = client.getProduct("Animal01");
 		assertEquals(inicialQuantity - 1, product.getQuantity());
 	}
 
 	@Test
 	public void buyProductNormalQuantityTest()
 			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
-		ProductView product = client.getProduct("Y1");
+		ProductView product = client.getProduct("Animal02");
 		int inicialQuantity = product.getQuantity();
-		client.buyProduct("Y1", 5);
-		product = client.getProduct("Y1");
+		client.buyProduct("Animal02", 5);
+		product = client.getProduct("Animal02");
 		assertEquals(inicialQuantity - 5, product.getQuantity());
 	}
 
 	@Test
 	public void buyProductMaxQuantityTest()
 			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
-		ProductView product = client.getProduct("Z1");
+		ProductView product = client.getProduct("Animal03");
 		int inicialQuantity = product.getQuantity();
-		client.buyProduct("Z1", 10);
-		product = client.getProduct("Z1");
+		client.buyProduct("Animal03", 10);
+		product = client.getProduct("Animal03");
 		assertEquals(inicialQuantity - 10, product.getQuantity());
 
 	}
