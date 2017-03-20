@@ -34,23 +34,39 @@ public class SearchProductsIT extends BaseIT {
 		{
 			ProductView product = new ProductView();
 			product.setId("X1");
-			product.setDesc("Basketball");
+			product.setDesc("Basketball red");
 			product.setPrice(10);
 			product.setQuantity(10);
 			client.createProduct(product);
 		}
 		{
 			ProductView product = new ProductView();
-			product.setId("Y2");
-			product.setDesc("Basketball");
-			product.setPrice(20);
-			product.setQuantity(20);
+			product.setId("Z3");
+			product.setDesc("Soccer ball");
+			product.setPrice(30);
+			product.setQuantity(30);
 			client.createProduct(product);
 		}
 		{
 			ProductView product = new ProductView();
-			product.setId("Z3");
-			product.setDesc("Soccer ball");
+			product.setId("Z4");
+			product.setDesc("Red Soccer ball");
+			product.setPrice(30);
+			product.setQuantity(30);
+			client.createProduct(product);
+		}
+		{
+			ProductView product = new ProductView();
+			product.setId("Z5");
+			product.setDesc("Soccer red ball");
+			product.setPrice(30);
+			product.setQuantity(30);
+			client.createProduct(product);
+		}
+		{
+			ProductView product = new ProductView();
+			product.setId("Z6");
+			product.setDesc("Soccer ball red");
 			product.setPrice(30);
 			product.setQuantity(30);
 			client.createProduct(product);
@@ -96,11 +112,6 @@ public class SearchProductsIT extends BaseIT {
 	public void searchProductsWhitespaceTest() throws BadText_Exception {
 		client.searchProducts(" ");
 	}
-	
-	@Test(expected = BadText_Exception.class)
-	public void searchProductsWithSpacesTest() throws BadText_Exception {
-		client.searchProducts("Word1 Word2");
-	}
 
 	@Test(expected = BadText_Exception.class)
 	public void searchProductsTabTest() throws BadText_Exception {
@@ -115,45 +126,97 @@ public class SearchProductsIT extends BaseIT {
 	// main tests
 
 	@Test
-	public void searchProductssThatExistSingleTest() throws BadProductId_Exception, BadText_Exception {
+	public void searchProductsThatExistSingleTest() throws BadText_Exception {
 		List<ProductView> productsList = client.searchProducts("Basketball");
 		assertEquals("X1", productsList.get(0).getId());
 		assertEquals(10, productsList.get(0).getPrice());
 		assertEquals(10, productsList.get(0).getQuantity());
-		assertEquals("Basketball", productsList.get(0).getDesc());
+		assertEquals("Basketball red", productsList.get(0).getDesc());
 	}
 
 	@Test
-	public void searchProductssThatExistMultipleTest() throws BadProductId_Exception, BadText_Exception {
+	public void searchProductsThatExistMultipleTest() throws BadText_Exception {
 		List<ProductView> productsList = client.searchProducts("ball");
+		assertEquals(5, productsList.size());
+		
 		assertEquals("X1", productsList.get(0).getId());
 		assertEquals(10, productsList.get(0).getPrice());
 		assertEquals(10, productsList.get(0).getQuantity());
-		assertEquals("Basketball", productsList.get(0).getDesc());
+		assertEquals("Basketball red", productsList.get(0).getDesc());
 
-		assertEquals("Y2", productsList.get(1).getId());
-		assertEquals(20, productsList.get(1).getPrice());
-		assertEquals(20, productsList.get(1).getQuantity());
-		assertEquals("Basketball", productsList.get(1).getDesc());
+		assertEquals("Z3", productsList.get(1).getId());
+		assertEquals(30, productsList.get(1).getPrice());
+		assertEquals(30, productsList.get(1).getQuantity());
+		assertEquals("Soccer ball", productsList.get(1).getDesc());
+		
+		assertEquals("Z4", productsList.get(2).getId());
+		assertEquals(30, productsList.get(2).getPrice());
+		assertEquals(30, productsList.get(2).getQuantity());
+		assertEquals("Red soccer ball", productsList.get(2).getDesc());
 
-		assertEquals("Z3", productsList.get(0).getId());
-		assertEquals(30, productsList.get(0).getPrice());
-		assertEquals(30, productsList.get(0).getQuantity());
-		assertEquals("Soccer ball", productsList.get(0).getDesc());
+		assertEquals("Z5", productsList.get(3).getId());
+		assertEquals(30, productsList.get(3).getPrice());
+		assertEquals(30, productsList.get(3).getQuantity());
+		assertEquals("Soccer red ball", productsList.get(3).getDesc());
 
+		assertEquals("Z6", productsList.get(4).getId());
+		assertEquals(30, productsList.get(4).getPrice());
+		assertEquals(30, productsList.get(4).getQuantity());
+		assertEquals("Soccer ball red", productsList.get(4).getDesc());
 	}
 
 	@Test
-	public void searchProductssThatExistSingleNotCaseSensitiveTest() throws BadProductId_Exception, BadText_Exception {
+	public void searchProductsThatDontExistSingleCaseSensitiveTest() throws BadText_Exception {
 		List<ProductView> productsList = client.searchProducts("SoCcEr");
+		assertTrue(productsList.isEmpty());
+	}
+
+	@Test
+	public void searchProductsThatExistSingleCaseSensitiveTest() throws BadText_Exception {
+		List<ProductView> productsList = client.searchProducts("soccer");
+		assertEquals(1, productsList.size());
+
+		assertEquals("Z4", productsList.get(0).getId());
+		assertEquals(30, productsList.get(0).getPrice());
+		assertEquals(30, productsList.get(0).getQuantity());
+		assertEquals("Red soccer ball", productsList.get(0).getDesc());		
+	}
+
+	@Test
+	public void searchProductsThatExistMultipleCaseSensitiveTest() throws BadText_Exception {
+		List<ProductView> productsList = client.searchProducts("Soccer");
+		assertEquals(3, productsList.size());
+
 		assertEquals("Z3", productsList.get(0).getId());
 		assertEquals(30, productsList.get(0).getPrice());
 		assertEquals(30, productsList.get(0).getQuantity());
 		assertEquals("Soccer ball", productsList.get(0).getDesc());
+		
+		assertEquals("Z5", productsList.get(1).getId());
+		assertEquals(30, productsList.get(1).getPrice());
+		assertEquals(30, productsList.get(1).getQuantity());
+		assertEquals("Soccer red ball", productsList.get(1).getDesc());
+
+		assertEquals("Z6", productsList.get(2).getId());
+		assertEquals(30, productsList.get(2).getPrice());
+		assertEquals(30, productsList.get(2).getQuantity());
+		assertEquals("Soccer ball red", productsList.get(2).getDesc());
 	}
 
 	@Test
-	public void searchProductssThatDoesNotExistTest() throws BadProductId_Exception, BadText_Exception {
+	public void searchProductsReversedTest() throws BadText_Exception {
+		List<ProductView> productsList = client.searchProducts("ball soccer");
+		assertTrue(productsList.isEmpty());
+	}
+
+	@Test
+	public void searchProductsMultipleSpacingTest() throws BadText_Exception {
+		List<ProductView> productsList = client.searchProducts("Soccer  ball");
+		assertTrue(productsList.isEmpty());
+	}
+
+	@Test
+	public void searchProductsThatDoesNotExistTest() throws BadText_Exception {
 		List<ProductView> productsList = client.searchProducts("GolfBall");
 		assertTrue(productsList.isEmpty());
 	}
