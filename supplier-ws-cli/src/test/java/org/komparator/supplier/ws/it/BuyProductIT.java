@@ -126,6 +126,7 @@ public class BuyProductIT extends BaseIT {
 		ProductView product = client.getProduct("X1");
 		int inicialQuantity = product.getQuantity();
 		client.buyProduct("X1", 1);
+		product = client.getProduct("X1");
 		assertEquals(inicialQuantity - 1, product.getQuantity());
 	}
 
@@ -135,6 +136,7 @@ public class BuyProductIT extends BaseIT {
 		ProductView product = client.getProduct("X1");
 		int inicialQuantity = product.getQuantity();
 		client.buyProduct("X1", 5);
+		product = client.getProduct("X1");
 		assertEquals(inicialQuantity - 5, product.getQuantity());
 	}
 
@@ -144,6 +146,7 @@ public class BuyProductIT extends BaseIT {
 		ProductView product = client.getProduct("X1");
 		int inicialQuantity = product.getQuantity();
 		client.buyProduct("X1", 10);
+		product = client.getProduct("X1");
 		assertEquals(inicialQuantity - 10, product.getQuantity());
 
 	}
