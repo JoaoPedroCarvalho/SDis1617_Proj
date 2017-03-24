@@ -25,7 +25,7 @@ public class BuyProductIT extends BaseIT {
 	public static void oneTimeSetUp() throws BadProductId_Exception, BadProduct_Exception {
 		// clear remote service state before all tests
 		client.clear();
-		
+
 		// Populate supplier
 		{
 			ProductView product = new ProductView();
@@ -103,6 +103,54 @@ public class BuyProductIT extends BaseIT {
 		client.buyProduct("\n", 5);
 	}
 
+	@Test(expected = BadProductId_Exception.class)
+	public void buyProductSpaceTest()
+			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
+		client.buyProduct("Animal 01", 5);
+	}
+
+	@Test(expected = BadProductId_Exception.class)
+	public void buyProductSymbol1Test()
+			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
+		client.buyProduct("Animal%01", 5);
+	}
+
+	@Test(expected = BadProductId_Exception.class)
+	public void buyProductSymbol2Test()
+			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
+		client.buyProduct("Animal.01", 5);
+	}
+
+	@Test(expected = BadProductId_Exception.class)
+	public void buyProductSymbol3Test()
+			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
+		client.buyProduct("Animal,01", 5);
+	}
+
+	@Test(expected = BadProductId_Exception.class)
+	public void buyProductSymbol4Test()
+			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
+		client.buyProduct("Animal;01", 5);
+	}
+
+	@Test(expected = BadProductId_Exception.class)
+	public void buyProductSymbol5Test()
+			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
+		client.buyProduct("Animal:01", 5);
+	}
+
+	@Test(expected = BadProductId_Exception.class)
+	public void buyProductSymbol6Test()
+			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
+		client.buyProduct("Animal-01", 5);
+	}
+
+	@Test(expected = BadProductId_Exception.class)
+	public void buyProductSymbol7Test()
+			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
+		client.buyProduct("Animal_01", 5);
+	}
+
 	@Test(expected = BadQuantity_Exception.class)
 	public void buyProductNegativeQuantity()
 			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
@@ -114,7 +162,7 @@ public class BuyProductIT extends BaseIT {
 			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
 		client.buyProduct("Animal01", 0);
 	}
-	
+
 	// Wrong input tests
 	@Test(expected = InsufficientQuantity_Exception.class)
 	public void buyProductTooMuchQuantity()
@@ -127,7 +175,7 @@ public class BuyProductIT extends BaseIT {
 			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
 		client.buyProduct("Planta01", 10);
 	}
-	
+
 	// Valid input tests
 	@Test
 	public void buyProductMinQuantityTest()
