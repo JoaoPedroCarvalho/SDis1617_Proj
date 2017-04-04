@@ -2,6 +2,7 @@ package org.komparator.supplier.ws;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.jws.WebService;
 
@@ -78,6 +79,9 @@ public class SupplierPortImpl implements SupplierPortType {
 	productId = productId.trim();
 	if (productId.length() == 0) {
 	    throwBadProductId("Product identifier cannot be empty or whitespace!");
+	}
+	if (Pattern.compile("[^a-zA-Z0-9]").matcher(productId).find()) {
+	    throwBadProductId("Product identifier must be alpha numeric!");
 	}
 	if (quantity <= 0) {
 	    throwBadQuantity("Quantity cannot be zero or less!");
@@ -232,5 +236,4 @@ public class SupplierPortImpl implements SupplierPortType {
 	faultInfo.message = message;
 	throw new InsufficientQuantity_Exception(message, faultInfo);
     }
-
 }
