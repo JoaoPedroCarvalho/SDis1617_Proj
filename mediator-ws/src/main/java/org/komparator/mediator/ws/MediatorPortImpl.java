@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.jws.WebService;
 
+import org.komparator.supplier.ws.BadProductId_Exception;
 import org.komparator.supplier.ws.BadText_Exception;
 import org.komparator.supplier.ws.ProductView;
 import org.komparator.supplier.ws.cli.SupplierClient;
@@ -29,7 +30,30 @@ public class MediatorPortImpl implements MediatorPortType {
 
     @Override
     public List<ItemView> getItems(String productId) throws InvalidItemId_Exception {
-	// TODO Auto-generated method stub
+	try {
+	    UDDINaming uddiNaming = endpointManager.getUddiNaming();
+	    Collection<UDDIRecord> records = uddiNaming.listRecords("T63_Supplier%");
+	    List<ItemView> result = new ArrayList<ItemView>();
+	    for (UDDIRecord record : records) {
+		SupplierClient client = new SupplierClient(uddiNaming.getUDDIUrl(), record.getOrgName());
+		try {
+		    ProductView product = client.getProduct(productId);
+		    ItemView itemFromGet = newItemView(product, record.getOrgName());
+		    for (int i = 0; i < result.size(); i++) {
+			ItemView itemFromResult = result.get(i);
+			if (itemFromResult.getPrice() > itemFromGet.getPrice()) {
+			    result.add(i, itemFromGet);
+			    break;
+			}
+		    }
+		} catch (BadProductId_Exception e) {
+		    throwInvalidItemId(e.getFaultInfo().getMessage());
+		}
+	    }
+	    return result;
+	} catch (UDDINamingException | SupplierClientException e) {
+	    // TODO: handle exception
+	}
 	return null;
     }
 
