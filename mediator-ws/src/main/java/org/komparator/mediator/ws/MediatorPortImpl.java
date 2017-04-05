@@ -6,6 +6,10 @@ import java.util.List;
 
 import javax.jws.WebService;
 
+import org.komparator.mediator.domain.Cart;
+import org.komparator.mediator.domain.Item;
+import org.komparator.mediator.domain.Mediator;
+import org.komparator.mediator.domain.ShoppingResult;
 import org.komparator.supplier.ws.BadProductId_Exception;
 import org.komparator.supplier.ws.BadText_Exception;
 import org.komparator.supplier.ws.ProductView;
@@ -37,8 +41,8 @@ public class MediatorPortImpl implements MediatorPortType {
 	    for (UDDIRecord record : records) {
 		SupplierClient client = new SupplierClient(uddiNaming.getUDDIUrl(), record.getOrgName());
 		try {
-		    ProductView product = client.getProduct(productId);
-		    ItemView itemFromGet = newItemView(product, record.getOrgName());
+		    Item item = new Item(client.getProduct(productId), record.getOrgName());
+		    ItemView itemFromGet = newItemView(item);
 		    for (int i = 0; i < result.size(); i++) {
 			ItemView itemFromResult = result.get(i);
 			if (itemFromResult.getPrice() > itemFromGet.getPrice()) {
@@ -52,7 +56,7 @@ public class MediatorPortImpl implements MediatorPortType {
 	    }
 	    return result;
 	} catch (UDDINamingException | SupplierClientException e) {
-	    // TODO: handle exception
+	    // continue;
 	}
 	return null;
     }
@@ -68,7 +72,8 @@ public class MediatorPortImpl implements MediatorPortType {
 		try {
 		    List<ProductView> tempResult = client.searchProducts(descText);
 		    for (ProductView tempProduct : tempResult) {
-			ItemView itemFromSearch = newItemView(tempProduct, record.getOrgName());
+			Item item = new Item(tempProduct, record.getOrgName());
+			ItemView itemFromSearch = newItemView(item);
 			for (int i = 0; i < result.size(); i++) {
 			    ItemView itemFromResult = result.get(i);
 			    int compareValue = itemFromResult.getItemId().getProductId()
@@ -90,7 +95,7 @@ public class MediatorPortImpl implements MediatorPortType {
 	    }
 	    return result;
 	} catch (UDDINamingException | SupplierClientException e) {
-	    // TODO: handle exception
+	    // continue;
 	}
 	return null;
     }
@@ -112,13 +117,30 @@ public class MediatorPortImpl implements MediatorPortType {
 
     @Override
     public void clear() {
-	// TODO Auto-generated method stub
+	Mediator.getInstance().reset();
+	try {
+	    UDDINaming uddiNaming = endpointManager.getUddiNaming();
+	    Collection<UDDIRecord> records = uddiNaming.listRecords("T63_Supplier%");
+	    for (UDDIRecord record : records) {
+		SupplierClient client = new SupplierClient(uddiNaming.getUDDIUrl(), record.getOrgName());
+		client.clear();
+	    }
+	} catch (UDDINamingException | SupplierClientException e) {
+	    // continue;
+	}
+
     }
 
     @Override
     public List<CartView> listCarts() {
-	// TODO Auto-generated method stub
-	return null;
+	Mediator mediator = Mediator.getInstance();
+	List<CartView> cartList = new ArrayList<CartView>();
+	for (String cartId : mediator.getCartsIds()) {
+	    Cart cart = mediator.getCart(cartId);
+	    CartView cv = newCartView(cart);
+	    cartList.add(cv);
+	}
+	return cartList;
     }
 
     @Override
@@ -134,40 +156,39 @@ public class MediatorPortImpl implements MediatorPortType {
 	    for (UDDIRecord record : records) {
 		SupplierClient client = new SupplierClient(uddiNaming.getUDDIUrl(), record.getOrgName());
 		System.out.println("Invoke ping()...");
-		pong += client.ping(arg0) + " # ";
+		pong += client.ping(arg0) + " /n ";
 	    }
 	    return pong;
 	} catch (UDDINamingException | SupplierClientException e) {
-	    // TODO: handle exception
+	    pong = e.getClass().toString();
 	}
 	return pong;
     }
 
     @Override
     public List<ShoppingResultView> shopHistory() {
-	// TODO Auto-generated method stub
-	return null;
+	Mediator mediator = Mediator.getInstance();
+	List<ShoppingResultView> shoppingResultList = new ArrayList<ShoppingResultView>();
+	for (String shoppingResultId : mediator.getShoppingResultsIds()) {
+	    ShoppingResult shoppingResult = mediator.getShoppingResult(shoppingResultId);
+	    ShoppingResultView shoppingResultView = newShoppingResultView(shoppingResult);
+	    shoppingResultList.add(shoppingResultView);
+	}
+	return shoppingResultList;
     }
 
     // View helpers -----------------------------------------------------
 
-    private ShoppingResultView newShoppingResultView(String id, Result result, int totalPrice) {
-	ShoppingResultView view = new ShoppingResultView();
-	view.setId(id);
-	view.setResult(result);
-	view.setTotalPrice(totalPrice);
-	return view;
+    private ShoppingResultView newShoppingResultView(ShoppingResult shoppingResult) {
+	return shoppingResult.toView();
     }
 
-    private ItemView newItemView(ProductView product, String supplierId) {
-	ItemView view = new ItemView();
-	ItemIdView itemIdView = new ItemIdView();
-	itemIdView.setProductId(product.getId());
-	itemIdView.setSupplierId(supplierId);
-	view.setItemId(itemIdView);
-	view.setDesc(product.getDesc());
-	view.setPrice(product.getPrice());
-	return view;
+    private ItemView newItemView(Item item) {
+	return item.toView();
+    }
+
+    private CartView newCartView(Cart cart) {
+	return cart.toView();
     }
 
     // Exception helpers -----------------------------------------------------
