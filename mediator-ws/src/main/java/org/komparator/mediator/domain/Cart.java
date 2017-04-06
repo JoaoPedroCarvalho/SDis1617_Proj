@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.komparator.mediator.ws.CartItemView;
 import org.komparator.mediator.ws.CartView;
+import org.komparator.mediator.ws.ItemIdView;
+import org.komparator.supplier.ws.ProductView;
 
 public class Cart {
 
@@ -16,16 +18,16 @@ public class Cart {
 	this.cartItems = new ArrayList<CartItemView>();
     }
 
-    public void addItemToCart(Item item, int quantity) {
+    public void addItemToCart(ItemIdView itemId, ProductView product, int quantity) {
 	for (CartItemView cartItemView : cartItems) {
-	    if (cartItemView.getItem().getItemId() == item.getItemId()) {
-		cartItemView.setQuantity(cartItemView.getQuantity() + quantity);
-		// verificacao feita no portImpl
+	    if (cartItemView.getItem().getItemId().getProductId().equals(itemId.getProductId())
+		    && cartItemView.getItem().getItemId().getSupplierId().equals(itemId.getSupplierId())) {
+		cartItemView.setQuantity(quantity);
 		return;
 	    }
 	}
 	CartItemView cartItemView = new CartItemView();
-	cartItemView.setItem(item.toView());
+	cartItemView.setItem(new Item(product, itemId.getSupplierId()).toView());
 	cartItemView.setQuantity(quantity);
 	cartItems.add(cartItemView);
     }
@@ -43,6 +45,16 @@ public class Cart {
 	cartView.setCartId(this.getId());
 	cartView.getItems().addAll(this.getItems());
 	return cartView;
+    }
+
+    public CartItemView getItemById(ItemIdView itemId) {
+	for (CartItemView cartItemView : cartItems) {
+	    ItemIdView cartItemId = cartItemView.getItem().getItemId();
+	    if (cartItemId.equals(itemId)) {
+		return cartItemView;
+	    }
+	}
+	return null;
     }
 
 }

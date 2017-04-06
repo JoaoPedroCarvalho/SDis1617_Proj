@@ -48,11 +48,12 @@ public class Mediator {
     private String generateShoppingResultId() {
 	boolean valid = false;
 	String shoppingResultId = null;
+	int numChars = 5;
 	while (!valid) {
 	    char[] chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
 	    StringBuilder sb = new StringBuilder();
 	    Random random = new Random();
-	    for (int i = 0; i < 5; i++) {
+	    for (int i = 0; i < numChars; i++) {
 		char c = chars[random.nextInt(chars.length)];
 		sb.append(c);
 	    }
@@ -78,5 +79,9 @@ public class Mediator {
 
     public ShoppingResult getShoppingResult(String shoppingResultId) {
 	return shoppingResults.get(shoppingResultId);
+    }
+
+    public void addCart(Cart cart) {
+	carts.put(cart.getId(), cart);
     }
 }
