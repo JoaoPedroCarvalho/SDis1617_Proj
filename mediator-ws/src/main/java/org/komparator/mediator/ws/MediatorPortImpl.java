@@ -3,6 +3,7 @@ package org.komparator.mediator.ws;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.jws.WebService;
 
@@ -110,7 +111,68 @@ public class MediatorPortImpl implements MediatorPortType {
     @Override
     public void addToCart(String cartId, ItemIdView itemId, int itemQty) throws InvalidCartId_Exception,
 	    InvalidItemId_Exception, InvalidQuantity_Exception, NotEnoughItems_Exception {
-	// TODO Auto-generated method stub
+	// CartId verification
+	if (cartId == null) {
+	    throwInvalidCartId("Cart identifier cannot be null!");
+	}
+	cartId = cartId.trim();
+	if (cartId.length() == 0) {
+	    throwInvalidCartId("Cart identifier cannot be empty or whitespace!");
+	}
+	if (Pattern.compile("[^a-zA-Z0-9]").matcher(cartId).find()) {
+	    throwInvalidCartId("Cart identifier must be alpha numeric!");
+	}
+	// ItemId verification
+	if (itemId == null) {
+	    throwInvalidItemId("Item identifier cannot be null!");
+	}
+	if (itemId.getProductId() == null) {
+	    throwInvalidItemId("Item-Product identifier cannot be null!");
+	}
+	if (itemId.getSupplierId() == null) {
+	    throwInvalidItemId("Item-Supplier identifier cannot be null!");
+	}
+	String pid = itemId.getProductId().trim();
+	if (pid.length() == 0) {
+	    throwInvalidItemId("Item-Product identifier cannot be empty or whitespace!");
+	}
+	String sid = itemId.getSupplierId().trim();
+	if (sid.length() == 0) {
+	    throwInvalidItemId("Item-Supplier identifier cannot be empty or whitespace!");
+	}
+	if (Pattern.compile("[^a-zA-Z0-9]").matcher(itemId.getProductId()).find()) {
+	    throwInvalidItemId("Item-Product identifier must be alpha numeric!");
+	}
+	if (itemQty <= 0) {
+	    throwInvalidQuantity("Quantity cannot be zero or less!");
+	}
+	Cart cart = null;
+	Mediator mediator = Mediator.getInstance();
+	for (CartView cartView : listCarts()) {
+	    if (cartView.getCartId().equals(cartId)) {
+		cart = mediator.getCart(cartView.getCartId());
+	    } else {
+		mediator.addCart(new Cart(cartId));
+		cart = mediator.getCart(cartId);
+	    }
+	}
+	try {
+	    UDDINaming uddiNaming = endpointManager.getUddiNaming();
+	    SupplierClient client = new SupplierClient(uddiNaming.getUDDIUrl(), itemId.getSupplierId());
+	    ProductView product = client.getProduct(itemId.getProductId());
+	    if (cart.getItemById(itemId) != null) {
+		itemQty += cart.getItemById(itemId).getQuantity();
+	    }
+	    if (itemQty < product.getQuantity()) {
+		throwNotEnoughItems("The selected item does not have the desired quantity!");
+	    }
+
+	    cart.addItemToCart(itemId, product, itemQty);
+	} catch (BadProductId_Exception e) {
+	    throwInvalidItemId(e.getFaultInfo().getMessage());
+	} catch (SupplierClientException e) {
+	    // continue;
+	}
 
     }
     // Auxiliary operations --------------------------------------------------
