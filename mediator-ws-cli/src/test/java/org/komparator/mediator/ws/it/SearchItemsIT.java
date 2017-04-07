@@ -101,6 +101,7 @@ public class SearchItemsIT extends BaseIT {
     }
 
     // Valid tests
+    // Very incomplete tests
 
     @Test
     public void searchItemsSingleItemMultipleSupTest() throws InvalidText_Exception {
