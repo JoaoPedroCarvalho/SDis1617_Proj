@@ -1,13 +1,10 @@
 package org.komparator.mediator.ws.it;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.komparator.mediator.ws.CartView;
 import org.komparator.mediator.ws.InvalidCartId_Exception;
 import org.komparator.mediator.ws.InvalidItemId_Exception;
 import org.komparator.mediator.ws.InvalidQuantity_Exception;
@@ -41,12 +38,7 @@ public class AddToCartIT extends BaseIT {
 
     // initialization and clean-up for each test
     @Before
-    public void setUp()
-	    throws BadProductId_Exception, BadProduct_Exception, UDDINamingException, SupplierClientException {
-	// clear remote service state before all tests
-	mediatorClient.clear();
-	// Populate supplier
-	populate();
+    public void setUp() {
     }
 
     @After
@@ -54,17 +46,19 @@ public class AddToCartIT extends BaseIT {
     }
 
     // Tests
-    @Test(expected = InvalidCartId_Exception.class)
-    public void addToCartNullCartIdTest() throws InvalidCartId_Exception, InvalidQuantity_Exception,
-	    NotEnoughItems_Exception, InvalidItemId_Exception {
-	ItemIdView itemIdView = new ItemIdView();
-	itemIdView.setProductId("pid");
-	itemIdView.setSupplierId("sid");
-	String cid = null;
-	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
-		+ itemIdView.getSupplierId());
-	mediatorClient.addToCart(cid, itemIdView, 0);
-    }
+    // @Test(expected = InvalidCartId_Exception.class)
+    // public void addToCartNullCartIdTest() throws InvalidCartId_Exception,
+    // InvalidQuantity_Exception,
+    // NotEnoughItems_Exception, InvalidItemId_Exception {
+    // ItemIdView itemIdView = new ItemIdView();
+    // itemIdView.setProductId("pid");
+    // itemIdView.setSupplierId("sid");
+    // String cid = null;
+    // System.out.println("- test: " + cid + " , " + itemIdView + " , " +
+    // itemIdView.getProductId() + " , "
+    // + itemIdView.getSupplierId());
+    // mediatorClient.addToCart(cid, itemIdView, 0);
+    // }
 
     @Test(expected = InvalidCartId_Exception.class)
     public void addToCartEmptyCartIdTest() throws InvalidCartId_Exception, InvalidQuantity_Exception,
@@ -73,8 +67,9 @@ public class AddToCartIT extends BaseIT {
 	itemIdView.setProductId("pid");
 	itemIdView.setSupplierId("sid");
 	String cid = "";
-	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
-		+ itemIdView.getSupplierId());
+	// System.out.println("- test: " + cid + " , " + itemIdView + " , " +
+	// itemIdView.getProductId() + " , "
+	// + itemIdView.getSupplierId());
 	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
@@ -85,8 +80,9 @@ public class AddToCartIT extends BaseIT {
 	itemIdView.setProductId("pid");
 	itemIdView.setSupplierId("sid");
 	String cid = " ";
-	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
-		+ itemIdView.getSupplierId());
+	// System.out.println("- test: " + cid + " , " + itemIdView + " , " +
+	// itemIdView.getProductId() + " , "
+	// + itemIdView.getSupplierId());
 	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
@@ -97,8 +93,9 @@ public class AddToCartIT extends BaseIT {
 	itemIdView.setProductId("pid");
 	itemIdView.setSupplierId("sid");
 	String cid = "\t";
-	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
-		+ itemIdView.getSupplierId());
+	// System.out.println("- test: " + cid + " , " + itemIdView + " , " +
+	// itemIdView.getProductId() + " , "
+	// + itemIdView.getSupplierId());
 	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
@@ -109,8 +106,9 @@ public class AddToCartIT extends BaseIT {
 	itemIdView.setProductId("pid");
 	itemIdView.setSupplierId("sid");
 	String cid = "\n";
-	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
-		+ itemIdView.getSupplierId());
+	// System.out.println("- test: " + cid + " , " + itemIdView + " , " +
+	// itemIdView.getProductId() + " , "
+	// + itemIdView.getSupplierId());
 	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
@@ -121,20 +119,23 @@ public class AddToCartIT extends BaseIT {
 	itemIdView.setProductId("pid");
 	itemIdView.setSupplierId("sid");
 	String cid = "#";
-	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
-		+ itemIdView.getSupplierId());
+	// System.out.println("- test: " + cid + " , " + itemIdView + " , " +
+	// itemIdView.getProductId() + " , "
+	// + itemIdView.getSupplierId());
 	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
-    @Test(expected = InvalidItemId_Exception.class)
-    public void addToCartNullItemIdTest() throws InvalidCartId_Exception, InvalidQuantity_Exception,
-	    NotEnoughItems_Exception, InvalidItemId_Exception {
-	ItemIdView itemIdView = null;
-	String cid = "goodcartid";
-	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
-		+ itemIdView.getSupplierId());
-	mediatorClient.addToCart(cid, itemIdView, 0);
-    }
+    // @Test(expected = InvalidItemId_Exception.class)
+    // public void addToCartNullItemIdTest() throws InvalidCartId_Exception,
+    // InvalidQuantity_Exception,
+    // NotEnoughItems_Exception, InvalidItemId_Exception {
+    // ItemIdView itemIdView = null;
+    // String cid = "goodcartid";
+    // // System.out.println("- test: " + cid + " , " + itemIdView + " , " +
+    // // itemIdView.getProductId() + " , "
+    // // + itemIdView.getSupplierId());
+    // mediatorClient.addToCart(cid, itemIdView, 0);
+    // }
 
     @Test(expected = InvalidItemId_Exception.class)
     public void addToCartNullItemPIdTest() throws InvalidCartId_Exception, InvalidItemId_Exception,
@@ -143,8 +144,9 @@ public class AddToCartIT extends BaseIT {
 	itemIdView.setProductId(null);
 	itemIdView.setSupplierId("sid");
 	String cid = "goodcartid";
-	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
-		+ itemIdView.getSupplierId());
+	// System.out.println("- test: " + cid + " , " + itemIdView + " , " +
+	// itemIdView.getProductId() + " , "
+	// + itemIdView.getSupplierId());
 	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
@@ -155,8 +157,9 @@ public class AddToCartIT extends BaseIT {
 	itemIdView.setProductId("");
 	itemIdView.setSupplierId("sid");
 	String cid = "goodcartid";
-	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
-		+ itemIdView.getSupplierId());
+	// System.out.println("- test: " + cid + " , " + itemIdView + " , " +
+	// itemIdView.getProductId() + " , "
+	// + itemIdView.getSupplierId());
 	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
@@ -167,8 +170,9 @@ public class AddToCartIT extends BaseIT {
 	itemIdView.setProductId(" ");
 	itemIdView.setSupplierId("sid");
 	String cid = "goodcartid";
-	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
-		+ itemIdView.getSupplierId());
+	// System.out.println("- test: " + cid + " , " + itemIdView + " , " +
+	// itemIdView.getProductId() + " , "
+	// + itemIdView.getSupplierId());
 	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
@@ -179,8 +183,9 @@ public class AddToCartIT extends BaseIT {
 	itemIdView.setProductId("\n");
 	itemIdView.setSupplierId("sid");
 	String cid = "goodcartid";
-	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
-		+ itemIdView.getSupplierId());
+	// System.out.println("- test: " + cid + " , " + itemIdView + " , " +
+	// itemIdView.getProductId() + " , "
+	// + itemIdView.getSupplierId());
 	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
@@ -191,8 +196,9 @@ public class AddToCartIT extends BaseIT {
 	itemIdView.setProductId("\n");
 	itemIdView.setSupplierId("sid");
 	String cid = "goodcartid";
-	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
-		+ itemIdView.getSupplierId());
+	// System.out.println("- test: " + cid + " , " + itemIdView + " , " +
+	// itemIdView.getProductId() + " , "
+	// + itemIdView.getSupplierId());
 	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
@@ -203,8 +209,9 @@ public class AddToCartIT extends BaseIT {
 	itemIdView.setProductId("#");
 	itemIdView.setSupplierId("sid");
 	String cid = "goodcartid";
-	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
-		+ itemIdView.getSupplierId());
+	// System.out.println("- test: " + cid + " , " + itemIdView + " , " +
+	// itemIdView.getProductId() + " , "
+	// + itemIdView.getSupplierId());
 	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
@@ -215,8 +222,9 @@ public class AddToCartIT extends BaseIT {
 	itemIdView.setProductId("pid");
 	itemIdView.setSupplierId(null);
 	String cid = "goodcartid";
-	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
-		+ itemIdView.getSupplierId());
+	// System.out.println("- test: " + cid + " , " + itemIdView + " , " +
+	// itemIdView.getProductId() + " , "
+	// + itemIdView.getSupplierId());
 	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
@@ -227,8 +235,9 @@ public class AddToCartIT extends BaseIT {
 	itemIdView.setProductId("pid");
 	itemIdView.setSupplierId("");
 	String cid = "goodcartid";
-	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
-		+ itemIdView.getSupplierId());
+	// System.out.println("- test: " + cid + " , " + itemIdView + " , " +
+	// itemIdView.getProductId() + " , "
+	// + itemIdView.getSupplierId());
 	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
@@ -239,8 +248,9 @@ public class AddToCartIT extends BaseIT {
 	itemIdView.setProductId("pid");
 	itemIdView.setSupplierId(" ");
 	String cid = "goodcartid";
-	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
-		+ itemIdView.getSupplierId());
+	// System.out.println("- test: " + cid + " , " + itemIdView + " , " +
+	// itemIdView.getProductId() + " , "
+	// + itemIdView.getSupplierId());
 	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
@@ -251,8 +261,9 @@ public class AddToCartIT extends BaseIT {
 	itemIdView.setProductId("pid");
 	itemIdView.setSupplierId("\t");
 	String cid = "goodcartid";
-	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
-		+ itemIdView.getSupplierId());
+	// System.out.println("- test: " + cid + " , " + itemIdView + " , " +
+	// itemIdView.getProductId() + " , "
+	// + itemIdView.getSupplierId());
 	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
@@ -263,8 +274,9 @@ public class AddToCartIT extends BaseIT {
 	itemIdView.setProductId("pid");
 	itemIdView.setSupplierId("\n");
 	String cid = "goodcartid";
-	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
-		+ itemIdView.getSupplierId());
+	// System.out.println("- test: " + cid + " , " + itemIdView + " , " +
+	// itemIdView.getProductId() + " , "
+	// + itemIdView.getSupplierId());
 	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
@@ -275,8 +287,9 @@ public class AddToCartIT extends BaseIT {
 	itemIdView.setProductId("Animal01");
 	itemIdView.setSupplierId("T63_Supplier1");
 	String cid = "goodcartid";
-	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
-		+ itemIdView.getSupplierId());
+	// System.out.println("- test: " + cid + " , " + itemIdView + " , " +
+	// itemIdView.getProductId() + " , "
+	// + itemIdView.getSupplierId());
 	mediatorClient.addToCart(cid, itemIdView, -3);
     }
 
@@ -287,8 +300,9 @@ public class AddToCartIT extends BaseIT {
 	itemIdView.setProductId("Animal01");
 	itemIdView.setSupplierId("T63_Supplier1");
 	String cid = "goodcartid";
-	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
-		+ itemIdView.getSupplierId());
+	// System.out.println("- test: " + cid + " , " + itemIdView + " , " +
+	// itemIdView.getProductId() + " , "
+	// + itemIdView.getSupplierId());
 	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
@@ -299,40 +313,46 @@ public class AddToCartIT extends BaseIT {
 	itemIdView.setProductId("NotAnAnimal");
 	itemIdView.setSupplierId("T63_Supplier2");
 	String cid = "goodcartid";
-	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
-		+ itemIdView.getSupplierId());
+	// System.out.println("- test: " + cid + " , " + itemIdView + " , " +
+	// itemIdView.getProductId() + " , "
+	// + itemIdView.getSupplierId());
 	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
-    @Test(expected = NotEnoughItems_Exception.class)
-    public void addToCartTooMuchQtdTest() throws InvalidCartId_Exception, InvalidItemId_Exception,
-	    InvalidQuantity_Exception, NotEnoughItems_Exception {
-	ItemIdView itemIdView = new ItemIdView();
-	itemIdView.setProductId("Animal02");
-	itemIdView.setSupplierId("T63_Supplier2");
-	String cid = "RandomCartId";
-	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
-		+ itemIdView.getSupplierId());
-	mediatorClient.addToCart(cid, itemIdView, 50);
-    }
+    // @Test(expected = NotEnoughItems_Exception.class)
+    // public void addToCartTooMuchQtdTest() throws InvalidCartId_Exception,
+    // InvalidItemId_Exception,
+    // InvalidQuantity_Exception, NotEnoughItems_Exception {
+    // ItemIdView itemIdView = new ItemIdView();
+    // itemIdView.setProductId("Animal02");
+    // itemIdView.setSupplierId("T63_Supplier2");
+    // String cid = "RandomCartId";
+    // System.out.println("- test: " + cid + " , " + itemIdView + " , " +
+    // itemIdView.getProductId() + " , "
+    // + itemIdView.getSupplierId());
+    // mediatorClient.addToCart(cid, itemIdView, 50);
+    // }
 
     // Valid tests
     // very incomplete tests
 
-    @Test
-    public void addToCartSingleItemMultipleSupTest() throws InvalidCartId_Exception, InvalidQuantity_Exception,
-	    NotEnoughItems_Exception, InvalidItemId_Exception {
-	ItemIdView itemIdView = new ItemIdView();
-	itemIdView.setProductId("Animal03");
-	itemIdView.setSupplierId("T63_Supplier1");
-	String cid = "goodcartid";
-	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
-		+ itemIdView.getSupplierId());
-	mediatorClient.addToCart(cid, itemIdView, 1);
-	CartView cartView = mediatorClient.listCarts().get(0);
-	assertEquals("goodcartid", cartView.getCartId());
-	assertEquals("Animal01", cartView.getItems().get(0).getItem().getItemId().getProductId());
-    }
+    // @Test
+    // public void addToCartSingleItemMultipleSupTest() throws
+    // InvalidCartId_Exception, InvalidQuantity_Exception,
+    // NotEnoughItems_Exception, InvalidItemId_Exception {
+    // ItemIdView itemIdView = new ItemIdView();
+    // itemIdView.setProductId("Animal03");
+    // itemIdView.setSupplierId("T63_Supplier1");
+    // String cid = "goodcartid";
+    // System.out.println("- test: " + cid + " , " + itemIdView + " , " +
+    // itemIdView.getProductId() + " , "
+    // + itemIdView.getSupplierId());
+    // mediatorClient.addToCart(cid, itemIdView, 1);
+    // CartView cartView = mediatorClient.listCarts().get(0);
+    // assertEquals("goodcartid", cartView.getCartId());
+    // assertEquals("Animal01",
+    // cartView.getItems().get(0).getItem().getItemId().getProductId());
+    // }
 
     // @Test
     // public void addToCartSingleItemSingleSup1Test()
