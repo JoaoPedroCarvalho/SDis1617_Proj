@@ -12,11 +12,14 @@ import org.komparator.mediator.domain.Item;
 import org.komparator.mediator.domain.Mediator;
 import org.komparator.mediator.domain.ShoppingResult;
 import org.komparator.supplier.ws.BadProductId_Exception;
+import org.komparator.supplier.ws.BadQuantity_Exception;
 import org.komparator.supplier.ws.BadText_Exception;
+import org.komparator.supplier.ws.InsufficientQuantity_Exception;
 import org.komparator.supplier.ws.ProductView;
 import org.komparator.supplier.ws.cli.SupplierClient;
 import org.komparator.supplier.ws.cli.SupplierClientException;
 
+import pt.ulisboa.tecnico.sdis.ws.cli.CreditCardClientException;
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINamingException;
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDIRecord;
@@ -123,8 +126,63 @@ public class MediatorPortImpl implements MediatorPortType {
     @Override
     public ShoppingResultView buyCart(String cartId, String creditCardNr)
 	    throws EmptyCart_Exception, InvalidCartId_Exception, InvalidCreditCard_Exception {
-	// TODO Auto-generated method stub
-	return null;
+	// CartId verification
+	if (cartId == null) {
+	    throwInvalidCartId("Cart identifier cannot be null!");
+	}
+	cartId = cartId.trim();
+	if (cartId.length() == 0) {
+	    throwInvalidCartId("Cart identifier cannot be empty or whitespace!");
+	}
+	if (Pattern.compile("[^a-zA-Z0-9]").matcher(cartId).find()) {
+	    throwInvalidCartId("Cart identifier must be alpha numeric!");
+	}
+	// CreditCard verification
+	if (creditCardNr == null) {
+	    throwInvalidCreditCard("CreditCard identifier cannot be null!");
+	}
+	creditCardNr = creditCardNr.trim();
+	if (creditCardNr.length() == 0) {
+	    throwInvalidCreditCard("CreditCard identifier cannot be empty or whitespace!");
+	}
+	if (creditCardNr.length() != 16) {
+	    throwInvalidCreditCard("CreditCard identifier must have 16 digits!");
+	}
+	if (Pattern.compile("[^0-9]").matcher(creditCardNr).find()) {
+	    throwInvalidCreditCard("CreditCard identifier must be numeric!");
+	}
+	// Operation
+	Mediator mediator = Mediator.getInstance();
+	Cart cart = mediator.getCart(cartId);
+	if (cart == null) {
+	    throwInvalidCartId("Cart with cartId provided does not exist");
+	}
+	if (cart.getItems().isEmpty()) {
+	    throwEmptyCart("Specified cart is empty");
+	}
+	try {
+	    if (!mediator.validateCreditCard(creditCardNr)) {
+		throwInvalidCreditCard("Credit Card Number provided is not valid");
+	    }
+	} catch (CreditCardClientException e) {
+	    throwInvalidCreditCard(e.getMessage());
+	}
+	ShoppingResult shoppingResult = new ShoppingResult();
+	for (CartItemView cartItem : cart.getItems()) {
+	    try {
+		ItemIdView itemId = cartItem.getItem().getItemId();
+		UDDINaming uddiNaming = endpointManager.getUddiNaming();
+		SupplierClient client = new SupplierClient(uddiNaming.getUDDIUrl(), itemId.getSupplierId());
+		client.buyProduct(itemId.getProductId(), cartItem.getQuantity());
+	    } catch (BadProductId_Exception | BadQuantity_Exception | InsufficientQuantity_Exception
+		    | SupplierClientException e) {
+		shoppingResult.addDroppedItem(cartItem);
+	    }
+	    shoppingResult.addPurchasedItem(cartItem);
+	}
+	shoppingResult.updateResult();
+	shoppingResult.setShoppingResultId(mediator.generateShoppingResultId());
+	return shoppingResult.toView();
     }
 
     @Override
@@ -165,6 +223,7 @@ public class MediatorPortImpl implements MediatorPortType {
 	if (itemQty <= 0) {
 	    throwInvalidQuantity("Quantity cannot be zero or less!");
 	}
+	// Operation
 	Cart cart = null;
 	Mediator mediator = Mediator.getInstance();
 	for (CartView cartView : listCarts()) {
