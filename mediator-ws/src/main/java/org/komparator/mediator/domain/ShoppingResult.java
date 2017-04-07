@@ -1,5 +1,6 @@
 package org.komparator.mediator.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.komparator.mediator.ws.CartItemView;
@@ -13,6 +14,22 @@ public class ShoppingResult {
     private List<CartItemView> purchasedItems;
     private List<CartItemView> droppedItems;
     private int totalPrice;
+
+    public ShoppingResult() {
+	this.purchasedItems = new ArrayList<CartItemView>();
+	this.droppedItems = new ArrayList<CartItemView>();
+	this.totalPrice = 0;
+    }
+
+    public void updateResult() {
+	if (purchasedItems.isEmpty()) {
+	    this.result = Result.EMPTY;
+	} else if (droppedItems.isEmpty()) {
+	    this.result = Result.COMPLETE;
+	} else {
+	    this.result = Result.PARTIAL;
+	}
+    }
 
     public String getId() {
 	return this.shoppingResultId;
@@ -32,6 +49,19 @@ public class ShoppingResult {
 
     public int getTotalPrice() {
 	return this.totalPrice;
+    }
+
+    public void addDroppedItem(CartItemView cartItem) {
+	this.droppedItems.add(cartItem);
+    }
+
+    public void addPurchasedItem(CartItemView cartItem) {
+	this.totalPrice += cartItem.getQuantity() * cartItem.getItem().getPrice();
+	this.purchasedItems.add(cartItem);
+    }
+
+    public void setShoppingResultId(String shoppingResultId) {
+	this.shoppingResultId = shoppingResultId;
     }
 
     public ShoppingResultView toView() {

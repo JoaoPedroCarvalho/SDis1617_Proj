@@ -5,6 +5,9 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import pt.ulisboa.tecnico.sdis.ws.cli.CreditCardClient;
+import pt.ulisboa.tecnico.sdis.ws.cli.CreditCardClientException;
+
 public class Mediator {
     // Members ---------------------------------------------------------------
 
@@ -45,7 +48,7 @@ public class Mediator {
 	carts.clear();
     }
 
-    private String generateShoppingResultId() {
+    public String generateShoppingResultId() {
 	boolean valid = false;
 	String shoppingResultId = null;
 	int numChars = 5;
@@ -63,6 +66,16 @@ public class Mediator {
 	    }
 	}
 	return shoppingResultId;
+    }
+
+    public boolean validateCreditCard(String ccNumber) throws CreditCardClientException {
+
+	// FIXME @#%@#!RVWEG ^%#$^% #@$ %@#
+	String uddiURL = null;
+	String wsName = null;
+
+	CreditCardClient ccc = new CreditCardClient(uddiURL, wsName);
+	return ccc.validateNumber(ccNumber);
     }
 
     public Set<String> getCartsIds() {
