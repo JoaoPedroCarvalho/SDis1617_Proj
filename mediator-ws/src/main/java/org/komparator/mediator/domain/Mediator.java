@@ -73,8 +73,16 @@ public class Mediator {
 	// FIXME @#%@#!RVWEG ^%#$^% #@$ %@#
 	String uddiURL = null;
 	String wsName = null;
+	String wsURL = "http://ws.sd.rnl.tecnico.ulisboa.pt:8080/cc";
 
-	CreditCardClient ccc = new CreditCardClient(uddiURL, wsName);
+	CreditCardClient ccc = null;
+	if (wsURL != null) {
+	    System.out.printf("Creating client for server at %s%n", wsURL);
+	    ccc = new CreditCardClient(wsURL);
+	} else if (uddiURL != null) {
+	    System.out.printf("Creating client using UDDI at %s for server with name %s%n", uddiURL, wsName);
+	    ccc = new CreditCardClient(uddiURL, wsName);
+	}
 	return ccc.validateNumber(ccNumber);
     }
 
