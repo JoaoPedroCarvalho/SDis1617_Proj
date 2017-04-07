@@ -35,6 +35,17 @@ public class MediatorPortImpl implements MediatorPortType {
 
     @Override
     public List<ItemView> getItems(String productId) throws InvalidItemId_Exception {
+	// Arguments verification
+	if (productId == null) {
+	    throwInvalidItemId("Product identifier cannot be null!");
+	}
+	productId = productId.trim();
+	if (productId.length() == 0) {
+	    throwInvalidItemId("Product identifier cannot be empty or whitespace!");
+	}
+	if (Pattern.compile("[^a-zA-Z0-9]").matcher(productId).find()) {
+	    throwInvalidItemId("Product identifier must be alpha numeric!");
+	}
 	try {
 	    UDDINaming uddiNaming = endpointManager.getUddiNaming();
 	    Collection<UDDIRecord> records = uddiNaming.listRecords("T63_Supplier%");
@@ -64,6 +75,14 @@ public class MediatorPortImpl implements MediatorPortType {
 
     @Override
     public List<ItemView> searchItems(String descText) throws InvalidText_Exception {
+	// Arguments verification
+	if (descText == null) {
+	    throwInvalidText("Search string cannot be null");
+	}
+	descText = descText.trim();
+	if (descText.length() == 0) {
+	    throwInvalidText("Search string cannot be empty or whitespace!");
+	}
 	try {
 	    UDDINaming uddiNaming = endpointManager.getUddiNaming();
 	    Collection<UDDIRecord> records = uddiNaming.listRecords("T63_Supplier%");
