@@ -110,39 +110,34 @@ public class SearchItemsIT extends BaseIT {
 
     }
 
-    // @Test
-    // public void searchItemsSingleItemSingleSup1Test() throws
-    // InvalidText_Exception {
-    // List<ItemView> output = mediatorClient.searchItems("Guinea pig yellow");
-    // assertEquals(1, output.size());
-    // }
-    //
-    // @Test
-    // public void searchItemsSingleItemSingleSup2Test() throws
-    // InvalidText_Exception {
-    // List<ItemView> output = mediatorClient.searchItems("Red pig");
-    // assertEquals(1, output.size());
-    // }
-    //
-    // @Test
-    // public void searchItemsMultipleItemMultipleSupTest() throws
-    // InvalidText_Exception {
-    // List<ItemView> output = mediatorClient.searchItems("yellow");
-    // assertEquals(2, output.size());
-    // }
-    //
-    // @Test
-    // public void searchItemsMultipleItemSingleSup1Test() throws
-    // InvalidText_Exception {
-    // List<ItemView> output = mediatorClient.searchItems("Guinea pig");
-    // assertEquals(2, output.size());
-    // }
-    //
-    // @Test
-    // public void searchItemsMultipleItemSingleSup2Test() throws
-    // InvalidText_Exception {
-    // List<ItemView> output = mediatorClient.searchItems("mouse");
-    // assertEquals(2, output.size());
-    // }
+    @Test
+    public void searchItemsSingleItemSingleSup1Test() throws InvalidText_Exception {
+	List<ItemView> output = mediatorClient.searchItems("Guinea pig yellow");
+	assertEquals(1, output.size());
+    }
+
+    @Test
+    public void searchItemsSingleItemSingleSup2Test() throws InvalidText_Exception {
+	List<ItemView> output = mediatorClient.searchItems("Red pig");
+	assertEquals(1, output.size());
+    }
+
+    @Test
+    public void searchItemsMultipleItemMultipleSupTest() throws InvalidText_Exception {
+	List<ItemView> output = mediatorClient.searchItems("yellow");
+	assertEquals(5, output.size());
+    }
+
+    @Test
+    public void searchItemsMultipleItemSingleSup1Test() throws InvalidText_Exception {
+	List<ItemView> output = mediatorClient.searchItems("Guinea pig");
+	assertEquals(2, output.size());
+    }
+
+    @Test
+    public void searchItemsMultipleItemSingleSup2Test() throws InvalidText_Exception {
+	List<ItemView> output = mediatorClient.searchItems("mouse");
+	assertEquals(2, output.size());
+    }
 
 }
