@@ -206,8 +206,12 @@ public class MediatorPortImpl implements MediatorPortType {
     @Override
     public void addToCart(String cartId, ItemIdView itemId, int itemQty) throws InvalidCartId_Exception,
 	    InvalidItemId_Exception, InvalidQuantity_Exception, NotEnoughItems_Exception {
+
+	ItemIdView ii = itemId;
+	System.out.println("- addToCart( " + cartId + " , " + ii + " , " + ii.getProductId() + " , "
+		+ ii.getSupplierId() + " , " + itemQty + " )-");
 	// CartId verification
-	if (cartId == null) {
+	if (cartId == null || cartId == "null") {
 	    throwInvalidCartId("Cart identifier cannot be null!");
 	}
 	cartId = cartId.trim();
@@ -243,20 +247,26 @@ public class MediatorPortImpl implements MediatorPortType {
 	}
 	// Operation
 	Cart cart = null;
+
 	Mediator mediator = Mediator.getInstance();
 	for (CartView cartView : listCarts()) {
 	    if (cartView.getCartId().equals(cartId)) {
 		cart = mediator.getCart(cartView.getCartId());
-	    } else {
-		mediator.addCart(new Cart(cartId));
-		cart = mediator.getCart(cartId);
 	    }
 	}
+	if (cart == null) {
+	    mediator.addCart(new Cart(cartId));
+	    cart = mediator.getCart(cartId);
+	}
+
 	try {
 	    UDDINaming uddiNaming = endpointManager.getUddiNaming();
 	    SupplierClient client = new SupplierClient(uddiNaming.getUDDIUrl(), itemId.getSupplierId());
-
 	    ProductView product = client.getProduct(itemId.getProductId());
+	    if (product == null) {
+		throwInvalidItemId("Item does not exist");
+	    }
+
 	    if (cart.getItemById(itemId) != null) {
 		itemQty += cart.getItemById(itemId).getQuantity();
 	    }
@@ -276,6 +286,7 @@ public class MediatorPortImpl implements MediatorPortType {
 
     @Override
     public void clear() {
+	System.out.println("- clear()");
 	Mediator.getInstance().reset();
 	try {
 	    UDDINaming uddiNaming = endpointManager.getUddiNaming();
@@ -292,6 +303,7 @@ public class MediatorPortImpl implements MediatorPortType {
 
     @Override
     public List<CartView> listCarts() {
+	System.out.println("- listCarts()");
 	Mediator mediator = Mediator.getInstance();
 	List<CartView> cartList = new ArrayList<CartView>();
 	for (String cartId : mediator.getCartsIds()) {
@@ -326,6 +338,7 @@ public class MediatorPortImpl implements MediatorPortType {
 
     @Override
     public List<ShoppingResultView> shopHistory() {
+	System.out.println("- shopHistory()");
 	Mediator mediator = Mediator.getInstance();
 	List<ShoppingResultView> shoppingResultList = new ArrayList<ShoppingResultView>();
 	for (String shoppingResultId : mediator.getShoppingResultsIds()) {

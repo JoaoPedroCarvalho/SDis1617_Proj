@@ -127,13 +127,15 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public void clear() {
+	System.out.println("- clear()");
 	Supplier.getInstance().reset();
     }
 
     @Override
     public void createProduct(ProductView productToCreate) throws BadProductId_Exception, BadProduct_Exception {
-	System.out.println("- createProduct( " + productToCreate.getId() + " , " + productToCreate.getDesc() + " , "
-		+ productToCreate.getPrice() + " , " + productToCreate.getQuantity() + " )");
+	ProductView ptc = productToCreate;
+	System.out.println("- createProduct( " + ptc + " , " + ptc.getId() + " , " + ptc.getDesc() + " , "
+		+ ptc.getPrice() + " , " + ptc.getQuantity() + " )");
 	// check null
 	if (productToCreate == null)
 	    throwBadProduct("Product view cannot be null!");
@@ -164,7 +166,7 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public List<ProductView> listProducts() {
-	System.out.println("listProducts()");
+	System.out.println("- listProducts()");
 	Supplier supplier = Supplier.getInstance();
 	List<ProductView> pvs = new ArrayList<ProductView>();
 	for (String pid : supplier.getProductsIDs()) {
@@ -177,7 +179,7 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public List<PurchaseView> listPurchases() {
-	System.out.println("listPurchases()");
+	System.out.println("- listPurchases()");
 	Supplier supplier = Supplier.getInstance();
 	List<PurchaseView> pvs = new ArrayList<PurchaseView>();
 	for (String pid : supplier.getPurchasesIDs()) {

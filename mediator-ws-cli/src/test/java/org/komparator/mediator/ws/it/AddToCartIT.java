@@ -22,7 +22,7 @@ import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINamingException;
 /**
  * Test suite
  */
-public class AddCartIT extends BaseIT {
+public class AddToCartIT extends BaseIT {
     @BeforeClass
     public static void oneTimeSetUp()
 	    throws BadProductId_Exception, BadProduct_Exception, UDDINamingException, SupplierClientException {
@@ -41,7 +41,12 @@ public class AddCartIT extends BaseIT {
 
     // initialization and clean-up for each test
     @Before
-    public void setUp() {
+    public void setUp()
+	    throws BadProductId_Exception, BadProduct_Exception, UDDINamingException, SupplierClientException {
+	// clear remote service state before all tests
+	mediatorClient.clear();
+	// Populate supplier
+	populate();
     }
 
     @After
@@ -55,7 +60,10 @@ public class AddCartIT extends BaseIT {
 	ItemIdView itemIdView = new ItemIdView();
 	itemIdView.setProductId("pid");
 	itemIdView.setSupplierId("sid");
-	mediatorClient.addToCart(null, itemIdView, 0);
+	String cid = null;
+	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
+		+ itemIdView.getSupplierId());
+	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
     @Test(expected = InvalidCartId_Exception.class)
@@ -64,7 +72,10 @@ public class AddCartIT extends BaseIT {
 	ItemIdView itemIdView = new ItemIdView();
 	itemIdView.setProductId("pid");
 	itemIdView.setSupplierId("sid");
-	mediatorClient.addToCart("", itemIdView, 0);
+	String cid = "";
+	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
+		+ itemIdView.getSupplierId());
+	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
     @Test(expected = InvalidCartId_Exception.class)
@@ -73,7 +84,10 @@ public class AddCartIT extends BaseIT {
 	ItemIdView itemIdView = new ItemIdView();
 	itemIdView.setProductId("pid");
 	itemIdView.setSupplierId("sid");
-	mediatorClient.addToCart(" ", itemIdView, 0);
+	String cid = " ";
+	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
+		+ itemIdView.getSupplierId());
+	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
     @Test(expected = InvalidCartId_Exception.class)
@@ -82,7 +96,10 @@ public class AddCartIT extends BaseIT {
 	ItemIdView itemIdView = new ItemIdView();
 	itemIdView.setProductId("pid");
 	itemIdView.setSupplierId("sid");
-	mediatorClient.addToCart("\t", itemIdView, 0);
+	String cid = "\t";
+	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
+		+ itemIdView.getSupplierId());
+	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
     @Test(expected = InvalidCartId_Exception.class)
@@ -91,7 +108,10 @@ public class AddCartIT extends BaseIT {
 	ItemIdView itemIdView = new ItemIdView();
 	itemIdView.setProductId("pid");
 	itemIdView.setSupplierId("sid");
-	mediatorClient.addToCart("\n", itemIdView, 0);
+	String cid = "\n";
+	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
+		+ itemIdView.getSupplierId());
+	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
     @Test(expected = InvalidCartId_Exception.class)
@@ -100,16 +120,20 @@ public class AddCartIT extends BaseIT {
 	ItemIdView itemIdView = new ItemIdView();
 	itemIdView.setProductId("pid");
 	itemIdView.setSupplierId("sid");
-	mediatorClient.addToCart("#", itemIdView, 0);
+	String cid = "#";
+	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
+		+ itemIdView.getSupplierId());
+	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
     @Test(expected = InvalidItemId_Exception.class)
     public void addToCartNullItemIdTest() throws InvalidCartId_Exception, InvalidQuantity_Exception,
 	    NotEnoughItems_Exception, InvalidItemId_Exception {
-	ItemIdView itemIdView = new ItemIdView();
-	itemIdView.setProductId("pid");
-	itemIdView.setSupplierId("sid");
-	mediatorClient.addToCart("goodcartid", null, 0);
+	ItemIdView itemIdView = null;
+	String cid = "goodcartid";
+	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
+		+ itemIdView.getSupplierId());
+	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
     @Test(expected = InvalidItemId_Exception.class)
@@ -118,7 +142,10 @@ public class AddCartIT extends BaseIT {
 	ItemIdView itemIdView = new ItemIdView();
 	itemIdView.setProductId(null);
 	itemIdView.setSupplierId("sid");
-	mediatorClient.addToCart("goodcartid", itemIdView, 0);
+	String cid = "goodcartid";
+	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
+		+ itemIdView.getSupplierId());
+	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
     @Test(expected = InvalidItemId_Exception.class)
@@ -127,7 +154,10 @@ public class AddCartIT extends BaseIT {
 	ItemIdView itemIdView = new ItemIdView();
 	itemIdView.setProductId("");
 	itemIdView.setSupplierId("sid");
-	mediatorClient.addToCart("goodcartid", itemIdView, 0);
+	String cid = "goodcartid";
+	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
+		+ itemIdView.getSupplierId());
+	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
     @Test(expected = InvalidItemId_Exception.class)
@@ -136,7 +166,10 @@ public class AddCartIT extends BaseIT {
 	ItemIdView itemIdView = new ItemIdView();
 	itemIdView.setProductId(" ");
 	itemIdView.setSupplierId("sid");
-	mediatorClient.addToCart("goodcartid", itemIdView, 0);
+	String cid = "goodcartid";
+	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
+		+ itemIdView.getSupplierId());
+	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
     @Test(expected = InvalidItemId_Exception.class)
@@ -145,7 +178,10 @@ public class AddCartIT extends BaseIT {
 	ItemIdView itemIdView = new ItemIdView();
 	itemIdView.setProductId("\n");
 	itemIdView.setSupplierId("sid");
-	mediatorClient.addToCart("goodcartid", itemIdView, 0);
+	String cid = "goodcartid";
+	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
+		+ itemIdView.getSupplierId());
+	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
     @Test(expected = InvalidItemId_Exception.class)
@@ -154,7 +190,10 @@ public class AddCartIT extends BaseIT {
 	ItemIdView itemIdView = new ItemIdView();
 	itemIdView.setProductId("\n");
 	itemIdView.setSupplierId("sid");
-	mediatorClient.addToCart("goodcartid", itemIdView, 0);
+	String cid = "goodcartid";
+	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
+		+ itemIdView.getSupplierId());
+	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
     @Test(expected = InvalidItemId_Exception.class)
@@ -163,7 +202,10 @@ public class AddCartIT extends BaseIT {
 	ItemIdView itemIdView = new ItemIdView();
 	itemIdView.setProductId("#");
 	itemIdView.setSupplierId("sid");
-	mediatorClient.addToCart("goodcartid", itemIdView, 0);
+	String cid = "goodcartid";
+	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
+		+ itemIdView.getSupplierId());
+	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
     @Test(expected = InvalidItemId_Exception.class)
@@ -172,7 +214,10 @@ public class AddCartIT extends BaseIT {
 	ItemIdView itemIdView = new ItemIdView();
 	itemIdView.setProductId("pid");
 	itemIdView.setSupplierId(null);
-	mediatorClient.addToCart("goodcartid", itemIdView, 0);
+	String cid = "goodcartid";
+	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
+		+ itemIdView.getSupplierId());
+	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
     @Test(expected = InvalidItemId_Exception.class)
@@ -181,7 +226,10 @@ public class AddCartIT extends BaseIT {
 	ItemIdView itemIdView = new ItemIdView();
 	itemIdView.setProductId("pid");
 	itemIdView.setSupplierId("");
-	mediatorClient.addToCart("goodcartid", itemIdView, 0);
+	String cid = "goodcartid";
+	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
+		+ itemIdView.getSupplierId());
+	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
     @Test(expected = InvalidItemId_Exception.class)
@@ -190,7 +238,10 @@ public class AddCartIT extends BaseIT {
 	ItemIdView itemIdView = new ItemIdView();
 	itemIdView.setProductId("pid");
 	itemIdView.setSupplierId(" ");
-	mediatorClient.addToCart("goodcartid", itemIdView, 0);
+	String cid = "goodcartid";
+	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
+		+ itemIdView.getSupplierId());
+	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
     @Test(expected = InvalidItemId_Exception.class)
@@ -199,25 +250,10 @@ public class AddCartIT extends BaseIT {
 	ItemIdView itemIdView = new ItemIdView();
 	itemIdView.setProductId("pid");
 	itemIdView.setSupplierId("\t");
-	mediatorClient.addToCart("goodcartid", itemIdView, 0);
-    }
-
-    @Test(expected = InvalidQuantity_Exception.class)
-    public void addToCartNegativeQtdTest() throws InvalidCartId_Exception, InvalidItemId_Exception,
-	    InvalidQuantity_Exception, NotEnoughItems_Exception {
-	ItemIdView itemIdView = new ItemIdView();
-	itemIdView.setProductId("pid");
-	itemIdView.setSupplierId("sid");
-	mediatorClient.addToCart("goodcartid", itemIdView, -3);
-    }
-
-    @Test(expected = InvalidQuantity_Exception.class)
-    public void addToCartZeroQtdTest() throws InvalidCartId_Exception, InvalidItemId_Exception,
-	    InvalidQuantity_Exception, NotEnoughItems_Exception {
-	ItemIdView itemIdView = new ItemIdView();
-	itemIdView.setProductId("pid");
-	itemIdView.setSupplierId("sid");
-	mediatorClient.addToCart("goodcartid", itemIdView, 0);
+	String cid = "goodcartid";
+	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
+		+ itemIdView.getSupplierId());
+	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
     @Test(expected = InvalidItemId_Exception.class)
@@ -226,16 +262,58 @@ public class AddCartIT extends BaseIT {
 	ItemIdView itemIdView = new ItemIdView();
 	itemIdView.setProductId("pid");
 	itemIdView.setSupplierId("\n");
-	mediatorClient.addToCart("goodcartid", itemIdView, 0);
+	String cid = "goodcartid";
+	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
+		+ itemIdView.getSupplierId());
+	mediatorClient.addToCart(cid, itemIdView, 0);
+    }
+
+    @Test(expected = InvalidQuantity_Exception.class)
+    public void addToCartNegativeQtdTest() throws InvalidCartId_Exception, InvalidItemId_Exception,
+	    InvalidQuantity_Exception, NotEnoughItems_Exception {
+	ItemIdView itemIdView = new ItemIdView();
+	itemIdView.setProductId("Animal01");
+	itemIdView.setSupplierId("T63_Supplier1");
+	String cid = "goodcartid";
+	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
+		+ itemIdView.getSupplierId());
+	mediatorClient.addToCart(cid, itemIdView, -3);
+    }
+
+    @Test(expected = InvalidQuantity_Exception.class)
+    public void addToCartZeroQtdTest() throws InvalidCartId_Exception, InvalidItemId_Exception,
+	    InvalidQuantity_Exception, NotEnoughItems_Exception {
+	ItemIdView itemIdView = new ItemIdView();
+	itemIdView.setProductId("Animal01");
+	itemIdView.setSupplierId("T63_Supplier1");
+	String cid = "goodcartid";
+	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
+		+ itemIdView.getSupplierId());
+	mediatorClient.addToCart(cid, itemIdView, 0);
+    }
+
+    @Test(expected = InvalidQuantity_Exception.class)
+    public void addToCartNotAnItemTest() throws InvalidCartId_Exception, InvalidItemId_Exception,
+	    InvalidQuantity_Exception, NotEnoughItems_Exception {
+	ItemIdView itemIdView = new ItemIdView();
+	itemIdView.setProductId("NotAnAnimal");
+	itemIdView.setSupplierId("T63_Supplier2");
+	String cid = "goodcartid";
+	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
+		+ itemIdView.getSupplierId());
+	mediatorClient.addToCart(cid, itemIdView, 0);
     }
 
     @Test(expected = NotEnoughItems_Exception.class)
     public void addToCartTooMuchQtdTest() throws InvalidCartId_Exception, InvalidItemId_Exception,
 	    InvalidQuantity_Exception, NotEnoughItems_Exception {
 	ItemIdView itemIdView = new ItemIdView();
-	itemIdView.setProductId("Animal01");
-	itemIdView.setSupplierId("T63_Supplier1");
-	mediatorClient.addToCart("goodcartid", itemIdView, 254);
+	itemIdView.setProductId("Animal02");
+	itemIdView.setSupplierId("T63_Supplier2");
+	String cid = "RandomCartId";
+	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
+		+ itemIdView.getSupplierId());
+	mediatorClient.addToCart(cid, itemIdView, 50);
     }
 
     // Valid tests
@@ -245,12 +323,15 @@ public class AddCartIT extends BaseIT {
     public void addToCartSingleItemMultipleSupTest() throws InvalidCartId_Exception, InvalidQuantity_Exception,
 	    NotEnoughItems_Exception, InvalidItemId_Exception {
 	ItemIdView itemIdView = new ItemIdView();
-	itemIdView.setProductId("Animal01");
+	itemIdView.setProductId("Animal03");
 	itemIdView.setSupplierId("T63_Supplier1");
-	mediatorClient.addToCart("goodcartid", itemIdView, 1);
+	String cid = "goodcartid";
+	System.out.println("- test: " + cid + " , " + itemIdView + " , " + itemIdView.getProductId() + " , "
+		+ itemIdView.getSupplierId());
+	mediatorClient.addToCart(cid, itemIdView, 1);
 	CartView cartView = mediatorClient.listCarts().get(0);
 	assertEquals("goodcartid", cartView.getCartId());
-	assertEquals("Animal01", cartView.getItems().get(0));
+	assertEquals("Animal01", cartView.getItems().get(0).getItem().getItemId().getProductId());
     }
 
     // @Test
