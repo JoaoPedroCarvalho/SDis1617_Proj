@@ -58,13 +58,14 @@ public class MediatorPortImpl implements MediatorPortType {
 		try {
 		    Item item = new Item(client.getProduct(productId), record.getOrgName());
 		    ItemView itemFromGet = newItemView(item);
-		    for (int i = 0; i < result.size(); i++) {
+		    int i = 0;
+		    while (i < result.size()) {
 			ItemView itemFromResult = result.get(i);
 			if (itemFromResult.getPrice() > itemFromGet.getPrice()) {
-			    result.add(i, itemFromGet);
 			    break;
 			}
 		    }
+		    result.add(i, itemFromGet);
 		} catch (BadProductId_Exception e) {
 		    throwInvalidItemId(e.getFaultInfo().getMessage());
 		}
@@ -86,37 +87,41 @@ public class MediatorPortImpl implements MediatorPortType {
 	if (descText.length() == 0) {
 	    throwInvalidText("Search string cannot be empty or whitespace!");
 	}
+	// Operation
 	try {
+	    List<ItemView> operationResult = new ArrayList<ItemView>();
 	    UDDINaming uddiNaming = endpointManager.getUddiNaming();
-	    Collection<UDDIRecord> records = uddiNaming.listRecords("T63_Supplier%");
-	    List<ItemView> result = new ArrayList<ItemView>();
-	    for (UDDIRecord record : records) {
-		SupplierClient client = new SupplierClient(uddiNaming.getUDDIUrl(), record.getOrgName());
+	    Collection<UDDIRecord> supplierRecords = uddiNaming.listRecords("T63_Supplier%");
+	    for (UDDIRecord supplier : supplierRecords) {
+		String wsName = supplier.getOrgName();
+		SupplierClient supplierClient = new SupplierClient(uddiNaming.getUDDIUrl(), wsName);
 		try {
-		    List<ProductView> tempResult = client.searchProducts(descText);
-		    for (ProductView tempProduct : tempResult) {
-			Item item = new Item(tempProduct, record.getOrgName());
-			ItemView itemFromSearch = newItemView(item);
-			for (int i = 0; i < result.size(); i++) {
-			    ItemView itemFromResult = result.get(i);
-			    int compareValue = itemFromResult.getItemId().getProductId()
-				    .compareToIgnoreCase(itemFromSearch.getItemId().getProductId());
+		    List<ProductView> supplierResponse = supplierClient.searchProducts(descText);
+		    for (ProductView goodProduct : supplierResponse) {
+			ItemView itemToSort = newItemView(new Item(goodProduct, wsName));
+			// Sorted on insert
+			int i = 0;
+			while (i < operationResult.size()) {
+			    ItemView itemOnResult = operationResult.get(i);
+			    int compareValue = itemOnResult.getItemId().getProductId()
+				    .compareToIgnoreCase(itemToSort.getItemId().getProductId());
 			    if (compareValue > 0) {
-				result.add(i, itemFromSearch);
 				break;
 			    } else if (compareValue == 0) {
-				if (itemFromResult.getPrice() > itemFromSearch.getPrice()) {
-				    result.add(i, itemFromSearch);
+				if (itemOnResult.getPrice() > itemToSort.getPrice()) {
 				    break;
 				}
 			    }
+			    i++;
 			}
+			operationResult.add(i, itemToSort);
 		    }
 		} catch (BadText_Exception e) {
 		    throwInvalidText(e.getFaultInfo().getMessage());
 		}
 	    }
-	    return result;
+
+	    return operationResult;
 	} catch (UDDINamingException | SupplierClientException e) {
 	    // continue;
 	}
@@ -285,7 +290,7 @@ public class MediatorPortImpl implements MediatorPortType {
 
     @Override
     public String ping(String arg0) {
-	String pong = "";
+	String pong = "\n";
 	if (arg0 == null || arg0.trim().length() == 0) {
 	    arg0 = "friend";
 	}
@@ -296,7 +301,7 @@ public class MediatorPortImpl implements MediatorPortType {
 	    for (UDDIRecord record : records) {
 		SupplierClient client = new SupplierClient(uddiNaming.getUDDIUrl(), record.getOrgName());
 		System.out.println("Invoke ping()...");
-		pong += client.ping(arg0) + " /n ";
+		pong += client.ping(arg0) + " \n";
 	    }
 	    return pong;
 	} catch (UDDINamingException | SupplierClientException e) {
