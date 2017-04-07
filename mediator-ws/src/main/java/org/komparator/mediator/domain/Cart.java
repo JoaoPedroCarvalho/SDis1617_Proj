@@ -50,7 +50,8 @@ public class Cart {
     public CartItemView getItemById(ItemIdView itemId) {
 	for (CartItemView cartItemView : cartItems) {
 	    ItemIdView cartItemId = cartItemView.getItem().getItemId();
-	    if (cartItemId.equals(itemId)) {
+	    if (cartItemId.getProductId().equals(itemId.getProductId())
+		    && cartItemId.getSupplierId().equals(itemId.getSupplierId())) {
 		return cartItemView;
 	    }
 	}
