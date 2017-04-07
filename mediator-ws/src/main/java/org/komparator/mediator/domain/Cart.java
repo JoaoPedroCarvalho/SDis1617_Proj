@@ -6,7 +6,6 @@ import java.util.List;
 import org.komparator.mediator.ws.CartItemView;
 import org.komparator.mediator.ws.CartView;
 import org.komparator.mediator.ws.ItemIdView;
-import org.komparator.supplier.ws.ProductView;
 
 public class Cart {
 
@@ -18,7 +17,7 @@ public class Cart {
 	this.cartItems = new ArrayList<CartItemView>();
     }
 
-    public void addItemToCart(ItemIdView itemId, ProductView product, int quantity) {
+    public void addItemToCart(ItemIdView itemId, String desc, int price, String pid, int quantity) {
 	for (CartItemView cartItemView : cartItems) {
 	    if (cartItemView.getItem().getItemId().getProductId().equals(itemId.getProductId())
 		    && cartItemView.getItem().getItemId().getSupplierId().equals(itemId.getSupplierId())) {
@@ -27,7 +26,7 @@ public class Cart {
 	    }
 	}
 	CartItemView cartItemView = new CartItemView();
-	cartItemView.setItem(new Item(product, itemId.getSupplierId()).toView());
+	cartItemView.setItem(new Item(desc, price, pid, itemId.getSupplierId()).toView());
 	cartItemView.setQuantity(quantity);
 	cartItems.add(cartItemView);
     }

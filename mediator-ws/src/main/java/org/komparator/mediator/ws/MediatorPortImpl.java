@@ -38,6 +38,7 @@ public class MediatorPortImpl implements MediatorPortType {
 
     @Override
     public List<ItemView> getItems(String productId) throws InvalidItemId_Exception {
+	System.out.println("- getItems( " + productId + " ) -");
 	// Arguments verification
 	if (productId == null) {
 	    throwInvalidItemId("Product identifier cannot be null!");
@@ -56,7 +57,15 @@ public class MediatorPortImpl implements MediatorPortType {
 	    for (UDDIRecord record : records) {
 		SupplierClient client = new SupplierClient(uddiNaming.getUDDIUrl(), record.getOrgName());
 		try {
-		    Item item = new Item(client.getProduct(productId), record.getOrgName());
+		    ProductView product = client.getProduct(productId);
+		    if (product == null) {
+			continue;
+		    }
+		    String wsname = record.getOrgName();
+		    System.out.println(wsname);
+		    // System.out.println(product.getId() + " | " +
+		    // record.getOrgName());
+		    Item item = new Item(product.getDesc(), product.getPrice(), productId, wsname);
 		    ItemView itemFromGet = newItemView(item);
 		    int i = 0;
 		    while (i < result.size()) {
@@ -64,6 +73,7 @@ public class MediatorPortImpl implements MediatorPortType {
 			if (itemFromResult.getPrice() > itemFromGet.getPrice()) {
 			    break;
 			}
+			i++;
 		    }
 		    result.add(i, itemFromGet);
 		} catch (BadProductId_Exception e) {
@@ -98,7 +108,8 @@ public class MediatorPortImpl implements MediatorPortType {
 		try {
 		    List<ProductView> supplierResponse = supplierClient.searchProducts(descText);
 		    for (ProductView goodProduct : supplierResponse) {
-			ItemView itemToSort = newItemView(new Item(goodProduct, wsName));
+			ItemView itemToSort = newItemView(
+				new Item(goodProduct.getDesc(), goodProduct.getPrice(), goodProduct.getId(), wsName));
 			// Sorted on insert
 			int i = 0;
 			while (i < operationResult.size()) {
@@ -131,6 +142,7 @@ public class MediatorPortImpl implements MediatorPortType {
     @Override
     public ShoppingResultView buyCart(String cartId, String creditCardNr)
 	    throws EmptyCart_Exception, InvalidCartId_Exception, InvalidCreditCard_Exception {
+	System.out.println("- buyCart( " + cartId + " , " + creditCardNr + " )-");
 	// CartId verification
 	if (cartId == null) {
 	    throwInvalidCartId("Cart identifier cannot be null!");
@@ -187,6 +199,7 @@ public class MediatorPortImpl implements MediatorPortType {
 	}
 	shoppingResult.updateResult();
 	shoppingResult.setShoppingResultId(mediator.generateShoppingResultId());
+	mediator.addShoppingResult(shoppingResult);
 	return shoppingResult.toView();
     }
 
@@ -242,6 +255,7 @@ public class MediatorPortImpl implements MediatorPortType {
 	try {
 	    UDDINaming uddiNaming = endpointManager.getUddiNaming();
 	    SupplierClient client = new SupplierClient(uddiNaming.getUDDIUrl(), itemId.getSupplierId());
+
 	    ProductView product = client.getProduct(itemId.getProductId());
 	    if (cart.getItemById(itemId) != null) {
 		itemQty += cart.getItemById(itemId).getQuantity();
@@ -250,7 +264,7 @@ public class MediatorPortImpl implements MediatorPortType {
 		throwNotEnoughItems("The selected item does not have the desired quantity!");
 	    }
 
-	    cart.addItemToCart(itemId, product, itemQty);
+	    cart.addItemToCart(itemId, product.getDesc(), product.getPrice(), product.getId(), itemQty);
 	} catch (BadProductId_Exception e) {
 	    throwInvalidItemId(e.getFaultInfo().getMessage());
 	} catch (SupplierClientException e) {

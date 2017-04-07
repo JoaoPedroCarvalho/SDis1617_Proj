@@ -103,6 +103,16 @@ public class Mediator {
     }
 
     public void addCart(Cart cart) {
-	carts.put(cart.getId(), cart);
+	if (acceptCart(cart.getId())) {
+	    carts.put(cart.getId(), new Cart(cart.getId()));
+	}
+    }
+
+    private boolean acceptCart(String string) {
+	return string != null && !"".equals(string);
+    }
+
+    public void addShoppingResult(ShoppingResult shoppingResult) {
+	shoppingResults.put(shoppingResult.getId(), shoppingResult);
     }
 }
