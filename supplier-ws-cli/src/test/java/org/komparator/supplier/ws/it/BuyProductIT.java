@@ -56,6 +56,8 @@ public class BuyProductIT extends BaseIT {
 	@AfterClass
 	public static void oneTimeTearDown() {
 		// clear remote service state after all tests
+						  
+							 
 		client.clear();
 	}
 
@@ -64,10 +66,14 @@ public class BuyProductIT extends BaseIT {
 	// initialization and clean-up for each test
 	@Before
 	public void setUp() {
+								   
 	}
+	 
 
 	@After
 	public void tearDown() {
+											  
+				
 	}
 
 	// Tests
@@ -156,25 +162,37 @@ public class BuyProductIT extends BaseIT {
 			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
 		client.buyProduct("Animal01", -5);
 	}
+				 
 
 	@Test(expected = BadQuantity_Exception.class)
 	public void buyProductZeroQuantity()
 			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
+											   
+											 
 		client.buyProduct("Animal01", 0);
+								   
+														  
 	}
 
 	// Wrong input tests
 	@Test(expected = InsufficientQuantity_Exception.class)
 	public void buyProductTooMuchQuantity()
 			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
+											   
+											 
 		client.buyProduct("Animal01", 100);
+								   
+														  
 	}
 
 	@Test(expected = BadProductId_Exception.class)
 	public void buyProductUnknownProduct()
 			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
+											   
+											 
 		client.buyProduct("Planta01", 10);
 	}
+														   
 
 	// Valid input tests
 	@Test

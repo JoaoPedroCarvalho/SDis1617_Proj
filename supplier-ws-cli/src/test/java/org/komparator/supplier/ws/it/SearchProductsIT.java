@@ -187,5 +187,4 @@ public class SearchProductsIT extends BaseIT {
 		assertEquals("Animal02", productsList.get(2).getId());
 		assertEquals("Guinea pig", productsList.get(2).getDesc());
 	}
-
 }

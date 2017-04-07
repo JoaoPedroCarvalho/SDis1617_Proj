@@ -17,6 +17,8 @@ import org.komparator.supplier.ws.PurchaseView;
 import org.komparator.supplier.ws.SupplierPortType;
 import org.komparator.supplier.ws.SupplierService;
 
+import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
+
 /**
  * Client port wrapper.
  *
@@ -25,93 +27,129 @@ import org.komparator.supplier.ws.SupplierService;
  */
 public class SupplierClient implements SupplierPortType {
 
-	/** WS service */
-	SupplierService service = null;
+    /** WS service */
+    SupplierService service = null;
 
-	/** WS port (port type is the interface, port is the implementation) */
-	SupplierPortType port = null;
+    /** WS port (port type is the interface, port is the implementation) */
+    SupplierPortType port = null;
 
-	/** WS end point address */
-	private String wsURL = null; // default value is defined inside WSDL
+    /** UDDI server URL */
+    private String uddiURL = null;
 
-	public String getWsURL() {
-		return wsURL;
+    /** WS name */
+    private String wsName = null;
+
+    /** WS endpoint address */
+    private String wsURL = null; // default value is defined inside WSDL
+
+    public String getWsURL() {
+	return wsURL;
+    }
+
+    /** output option **/
+    private boolean verbose = false;
+
+    public boolean isVerbose() {
+	return verbose;
+    }
+
+    public void setVerbose(boolean verbose) {
+	this.verbose = verbose;
+    }
+
+    /** constructor with provided web service URL */
+    public SupplierClient(String wsURL) throws SupplierClientException {
+	this.wsURL = wsURL;
+	createStub();
+    }
+
+    /** constructor with provided UDDI location and name */
+    public SupplierClient(String uddiURL, String wsName) throws SupplierClientException {
+	this.uddiURL = uddiURL;
+	this.wsName = wsName;
+	uddiLookup();
+	createStub();
+    }
+
+    /** UDDI lookup */
+    private void uddiLookup() throws SupplierClientException {
+	try {
+	    if (verbose)
+		System.out.printf("Contacting UDDI at %s%n", uddiURL);
+	    UDDINaming uddiNaming = new UDDINaming(uddiURL);
+
+	    if (verbose)
+		System.out.printf("Looking for '%s'%n", wsName);
+	    wsURL = uddiNaming.lookup(wsName);
+
+	} catch (Exception e) {
+	    String msg = String.format("Client failed lookup on UDDI at %s!", uddiURL);
+	    throw new SupplierClientException(msg, e);
 	}
 
-	/** output option **/
-	private boolean verbose = false;
-
-	public boolean isVerbose() {
-		return verbose;
+	if (wsURL == null) {
+	    String msg = String.format("Service with name %s not found on UDDI at %s", wsName, uddiURL);
+	    throw new SupplierClientException(msg);
 	}
+    }
 
-	public void setVerbose(boolean verbose) {
-		this.verbose = verbose;
+    /** Stub creation and configuration */
+    private void createStub() {
+	if (verbose)
+	    System.out.println("Creating stub ...");
+	service = new SupplierService();
+	port = service.getSupplierPort();
+
+	if (wsURL != null) {
+	    if (verbose)
+		System.out.println("Setting endpoint address ...");
+	    BindingProvider bindingProvider = (BindingProvider) port;
+	    Map<String, Object> requestContext = bindingProvider.getRequestContext();
+	    requestContext.put(ENDPOINT_ADDRESS_PROPERTY, wsURL);
 	}
+    }
 
-	/** constructor with provided web service URL */
-	public SupplierClient(String wsURL) throws SupplierClientException {
-		this.wsURL = wsURL;
-		createStub();
-	}
+    // remote invocation methods ----------------------------------------------
 
-	/** Stub creation and configuration */
-	private void createStub() {
-		if (verbose)
-			System.out.println("Creating stub ...");
-		service = new SupplierService();
-		port = service.getSupplierPort();
+    @Override
+    public ProductView getProduct(String productId) throws BadProductId_Exception {
+	return port.getProduct(productId);
+    }
 
-		if (wsURL != null) {
-			if (verbose)
-				System.out.println("Setting endpoint address ...");
-			BindingProvider bindingProvider = (BindingProvider) port;
-			Map<String, Object> requestContext = bindingProvider.getRequestContext();
-			requestContext.put(ENDPOINT_ADDRESS_PROPERTY, wsURL);
-		}
-	}
+    @Override
+    public List<ProductView> searchProducts(String descText) throws BadText_Exception {
+	return port.searchProducts(descText);
+    }
 
-	// remote invocation methods ----------------------------------------------
+    @Override
+    public String buyProduct(String productId, int quantity)
+	    throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
+	return port.buyProduct(productId, quantity);
+    }
 
-	@Override
-	public ProductView getProduct(String productId) throws BadProductId_Exception {
-		return port.getProduct(productId);
-	}
+    @Override
+    public String ping(String name) {
+	return port.ping(name);
+    }
 
-	@Override
-	public List<ProductView> searchProducts(String descText) throws BadText_Exception {
-		return port.searchProducts(descText);
-	}
+    @Override
+    public void clear() {
+	port.clear();
+    }
 
-	@Override
-	public String buyProduct(String productId, int quantity)
-			throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
-		return port.buyProduct(productId, quantity);
-	}
+    @Override
+    public void createProduct(ProductView productToCreate) throws BadProductId_Exception, BadProduct_Exception {
+	port.createProduct(productToCreate);
+    }
 
-	@Override
-	public String ping(String name) {
-		return port.ping(name);
-	}
+    @Override
+    public List<ProductView> listProducts() {
+	return port.listProducts();
+    }
 
-	@Override
-	public void clear() {
-		port.clear();
-	}
-
-	@Override
-	public void createProduct(ProductView productToCreate) throws BadProductId_Exception, BadProduct_Exception {
-		port.createProduct(productToCreate);
-	}
-
-	@Override
-	public List<ProductView> listProducts() {
-		return port.listProducts();
-	}
-
-	@Override
-	public List<PurchaseView> listPurchases() {
-		return port.listPurchases();
-	}
+    @Override
+    public List<PurchaseView> listPurchases() {
+	return port.listPurchases();
+    }
 
 }

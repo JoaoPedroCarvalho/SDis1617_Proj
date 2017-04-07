@@ -23,15 +23,24 @@
         <mainclass>org.komparator.supplier.ws.cli.SupplierClientApp</mainclass>
 
         <ws.url>http://localhost:8081/supplier-ws/endpoint</ws.url>
+        <ws.i>1</ws.i>
+        <ws.name>T63_Supplier${ws.i}</ws.name>
+		<uddi.url>http://localhost:9090</uddi.url>
     </properties>
 
     <dependencies>
-        <!-- JAX-WS -->
+		<!-- JAX-WS -->
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-rt</artifactId>
             <version>2.2.10</version>
         </dependency>
+		<!-- UDDI Naming -->
+        <dependency>
+            <groupId>pt.ulisboa.tecnico.sdis</groupId>
+            <artifactId>uddi-naming</artifactId>
+            <version>1.2</version>
+        </dependency>			 
         <!-- JUnit -->
         <dependency>
             <groupId>junit</groupId>
@@ -109,7 +118,8 @@
                     <killAfter>-1</killAfter>
                     <mainClass>${mainclass}</mainClass>
                     <arguments>
-                        <argument>${ws.url}</argument>
+                        <argument>${uddi.url}</argument>
+                        <argument>${ws.name}</argument>							   
                     </arguments>
                 </configuration>
             </plugin>
