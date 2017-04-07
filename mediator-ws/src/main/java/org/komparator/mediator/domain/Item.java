@@ -2,7 +2,6 @@ package org.komparator.mediator.domain;
 
 import org.komparator.mediator.ws.ItemIdView;
 import org.komparator.mediator.ws.ItemView;
-import org.komparator.supplier.ws.ProductView;
 
 public class Item {
 
@@ -10,12 +9,12 @@ public class Item {
     private String desc;
     private int price;
 
-    public Item(ProductView product, String orgName) {
+    public Item(String desc, int price, String pid, String orgName) {
 	this.itemId = new ItemIdView();
-	this.itemId.setProductId(product.getId());
+	this.itemId.setProductId(pid);
 	this.itemId.setSupplierId(orgName);
-	this.desc = product.getDesc();
-	this.price = product.getPrice();
+	this.desc = desc;
+	this.price = price;
 
     }
 

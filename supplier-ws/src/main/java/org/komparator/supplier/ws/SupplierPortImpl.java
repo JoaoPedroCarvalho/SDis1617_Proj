@@ -25,6 +25,7 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public ProductView getProduct(String productId) throws BadProductId_Exception {
+	System.out.println("- getProduct( " + productId + " )");
 	// check product id
 	if (productId == null)
 	    throwBadProductId("Product identifier cannot be null!");
@@ -46,6 +47,7 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public List<ProductView> searchProducts(String descText) throws BadText_Exception {
+	System.out.println("- searchProducts( " + descText + " )");
 	// Arguments verification
 	if (descText == null) {
 	    throwBadText("Search string cannot be null!");
@@ -72,6 +74,8 @@ public class SupplierPortImpl implements SupplierPortType {
     @Override
     public String buyProduct(String productId, int quantity)
 	    throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
+
+	System.out.println("- createProduct( " + productId + " , " + quantity + " )");
 	// Arguments verification
 	if (productId == null) {
 	    throwBadProductId("Product identifier cannot be null!");
@@ -128,6 +132,8 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public void createProduct(ProductView productToCreate) throws BadProductId_Exception, BadProduct_Exception {
+	System.out.println("- createProduct( " + productToCreate.getId() + " , " + productToCreate.getDesc() + " , "
+		+ productToCreate.getPrice() + " , " + productToCreate.getQuantity() + " )");
 	// check null
 	if (productToCreate == null)
 	    throwBadProduct("Product view cannot be null!");
@@ -158,6 +164,7 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public List<ProductView> listProducts() {
+	System.out.println("listProducts()");
 	Supplier supplier = Supplier.getInstance();
 	List<ProductView> pvs = new ArrayList<ProductView>();
 	for (String pid : supplier.getProductsIDs()) {
@@ -170,6 +177,7 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public List<PurchaseView> listPurchases() {
+	System.out.println("listPurchases()");
 	Supplier supplier = Supplier.getInstance();
 	List<PurchaseView> pvs = new ArrayList<PurchaseView>();
 	for (String pid : supplier.getPurchasesIDs()) {
