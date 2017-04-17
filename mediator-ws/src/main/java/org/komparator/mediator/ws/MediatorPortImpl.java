@@ -191,11 +191,11 @@ public class MediatorPortImpl implements MediatorPortType {
 		UDDINaming uddiNaming = endpointManager.getUddiNaming();
 		SupplierClient client = new SupplierClient(uddiNaming.getUDDIUrl(), itemId.getSupplierId());
 		client.buyProduct(itemId.getProductId(), cartItem.getQuantity());
+		shoppingResult.addPurchasedItem(cartItem);
 	    } catch (BadProductId_Exception | BadQuantity_Exception | InsufficientQuantity_Exception
 		    | SupplierClientException e) {
 		shoppingResult.addDroppedItem(cartItem);
 	    }
-	    shoppingResult.addPurchasedItem(cartItem);
 	}
 	shoppingResult.updateResult();
 	shoppingResult.setShoppingResultId(mediator.generateShoppingResultId());
@@ -208,8 +208,9 @@ public class MediatorPortImpl implements MediatorPortType {
 	    InvalidItemId_Exception, InvalidQuantity_Exception, NotEnoughItems_Exception {
 
 	ItemIdView ii = itemId;
-	System.out.println("- addToCart( " + cartId + " , " + ii + " , " + ii.getProductId() + " , "
-		+ ii.getSupplierId() + " , " + itemQty + " )-");
+	// System.out.println("- addToCart( " + cartId + " , " + ii + " , " +
+	// ii.getProductId() + " , "
+	// + ii.getSupplierId() + " , " + itemQty + " )-");
 	// CartId verification
 	if (cartId == null || cartId == "null") {
 	    throwInvalidCartId("Cart identifier cannot be null!");
@@ -270,7 +271,7 @@ public class MediatorPortImpl implements MediatorPortType {
 	    if (cart.getItemById(itemId) != null) {
 		itemQty += cart.getItemById(itemId).getQuantity();
 	    }
-	    if (itemQty < product.getQuantity()) {
+	    if (itemQty > product.getQuantity()) {
 		throwNotEnoughItems("The selected item does not have the desired quantity!");
 	    }
 

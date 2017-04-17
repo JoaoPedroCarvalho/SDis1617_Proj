@@ -22,8 +22,17 @@
 
         <mainclass>org.komparator.mediator.ws.cli.MediatorClientApp</mainclass>
 
-        <ws.name>T63_Mediator</ws.name>
+        <group.id>T63</group.id>							 
         <uddi.url>http://localhost:9090</uddi.url>
+        <uddi.enabled>true</uddi.enabled>
+        <uddi.url>http://localhost:9090</uddi.url>
+
+        <ws.name>${group.id}_Mediator</ws.name>
+        <ws.url>http://localhost:8080/mediator-ws/endpoint</ws.url>
+        
+        <supplier.ws.name>${group.id}_Supplier</supplier.ws.name>
+        <!-- The url below contains a placeholder ($i) that will be replaced in run-time -->
+        <supplier.ws.url>http://localhost:808$i/supplier-ws/endpoint</supplier.ws.url>
     </properties>
 
     <dependencies>
