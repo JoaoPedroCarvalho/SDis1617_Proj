@@ -22,10 +22,10 @@
 
         <mainclass>org.komparator.mediator.ws.cli.MediatorClientApp</mainclass>
 
-        <group.id>T63</group.id>							 
-        <uddi.url>http://localhost:9090</uddi.url>
+        <group.id>T63</group.id>					
         <uddi.enabled>true</uddi.enabled>
         <uddi.url>http://localhost:9090</uddi.url>
+<!--         <uddi.url>http://t63:gm8AvvUD@uddi.sd.rnl.tecnico.ulisboa.pt:9090/</uddi.url> -->
 
         <ws.name>${group.id}_Mediator</ws.name>
         <ws.url>http://localhost:8080/mediator-ws/endpoint</ws.url>
