@@ -32,7 +32,6 @@ public class SupplierPortImpl implements SupplierPortType {
 	productId = productId.trim();
 	if (productId.length() == 0)
 	    throwBadProductId("Product identifier cannot be empty or whitespace!");
-
 	// retrieve product
 	Supplier supplier = Supplier.getInstance();
 	Product p = supplier.getProduct(productId);
@@ -85,7 +84,7 @@ public class SupplierPortImpl implements SupplierPortType {
 	    throwBadProductId("Product identifier cannot be empty or whitespace!");
 	}
 	if (Pattern.compile("[^a-zA-Z0-9]").matcher(productId).find()) {
-	    throwBadProductId("Product identifier must be alpha numeric!");
+	    throwBadProductId("Product identifier '" + productId + "' must be alpha numeric!");
 	}
 	if (quantity <= 0) {
 	    throwBadQuantity("Quantity cannot be zero or less!");
@@ -95,17 +94,19 @@ public class SupplierPortImpl implements SupplierPortType {
 	Product product = supplier.getProduct(productId);
 	if (product == null) {
 	    // Checks if PId exists
-	    throwBadProductId("Product identifier provided does not exist!");
+	    throwBadProductId("Product identifier provided '" + productId + "' does not exist!");
 	}
 	if (product.getQuantity() < quantity) {
 	    // Check if exists enough
-	    throwInsufficientQuantity("Not enough quantity of selected product!");
+	    throwInsufficientQuantity(
+		    "Not enough quantity (" + quantity + ") of selected product '" + productId + "'!");
 	}
 	try {
 	    String purchaseId = supplier.buyProduct(productId, quantity);
 	    return purchaseId;
 	} catch (QuantityException e) {
-	    throwInsufficientQuantity("Not enough quantity of selected product!");
+	    throwInsufficientQuantity(
+		    "Not enough quantity (" + quantity + ") of selected product '" + productId + "'!");
 	}
 	return null;
     }
@@ -133,12 +134,17 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public void createProduct(ProductView productToCreate) throws BadProductId_Exception, BadProduct_Exception {
-	ProductView ptc = productToCreate;
-	System.out.println("- createProduct( " + ptc + " , " + ptc.getId() + " , " + ptc.getDesc() + " , "
-		+ ptc.getPrice() + " , " + ptc.getQuantity() + " )");
+	if (productToCreate == null) {
+	    System.out.println("- createProduct( " + productToCreate + " )");
+	} else {
+	    System.out.println("- createProduct( " + productToCreate + " , " + productToCreate.getId() + " , "
+		    + productToCreate.getDesc() + " , " + productToCreate.getPrice() + " , "
+		    + productToCreate.getQuantity() + " )");
+	}
 	// check null
-	if (productToCreate == null)
+	if (productToCreate == null) {
 	    throwBadProduct("Product view cannot be null!");
+	}
 	// check id
 	String productId = productToCreate.getId();
 	if (productId == null)
@@ -152,13 +158,14 @@ public class SupplierPortImpl implements SupplierPortType {
 	    productDesc = "";
 	// check quantity
 	int quantity = productToCreate.getQuantity();
-	if (quantity <= 0)
-	    throwBadProduct("Quantity must be a positive number!");
+	if (quantity <= 0) {
+	    throwBadProduct("Quantity (" + quantity + ")must be a positive number!");
+	}
 	// check price
 	int price = productToCreate.getPrice();
-	if (price <= 0)
-	    throwBadProduct("Price must be a positive number!");
-
+	if (price <= 0) {
+	    throwBadProduct("Price (" + price + ") must be a positive number!");
+	}
 	// create new product
 	Supplier s = Supplier.getInstance();
 	s.registerProduct(productId, productDesc, quantity, price);
@@ -216,6 +223,7 @@ public class SupplierPortImpl implements SupplierPortType {
     private void throwBadProductId(final String message) throws BadProductId_Exception {
 	BadProductId faultInfo = new BadProductId();
 	faultInfo.message = message;
+	System.err.println(message);
 	throw new BadProductId_Exception(message, faultInfo);
     }
 
@@ -223,6 +231,7 @@ public class SupplierPortImpl implements SupplierPortType {
     private void throwBadProduct(final String message) throws BadProduct_Exception {
 	BadProduct faultInfo = new BadProduct();
 	faultInfo.message = message;
+	System.err.println(message);
 	throw new BadProduct_Exception(message, faultInfo);
     }
 
@@ -230,6 +239,7 @@ public class SupplierPortImpl implements SupplierPortType {
     private void throwBadText(final String message) throws BadText_Exception {
 	BadText faultInfo = new BadText();
 	faultInfo.message = message;
+	System.err.println(message);
 	throw new BadText_Exception(message, faultInfo);
     }
 
@@ -237,6 +247,7 @@ public class SupplierPortImpl implements SupplierPortType {
     private void throwBadQuantity(final String message) throws BadQuantity_Exception {
 	BadQuantity faultInfo = new BadQuantity();
 	faultInfo.message = message;
+	System.err.println(message);
 	throw new BadQuantity_Exception(message, faultInfo);
     }
 
@@ -244,6 +255,7 @@ public class SupplierPortImpl implements SupplierPortType {
     private void throwInsufficientQuantity(final String message) throws InsufficientQuantity_Exception {
 	InsufficientQuantity faultInfo = new InsufficientQuantity();
 	faultInfo.message = message;
+	System.err.println(message);
 	throw new InsufficientQuantity_Exception(message, faultInfo);
     }
 }

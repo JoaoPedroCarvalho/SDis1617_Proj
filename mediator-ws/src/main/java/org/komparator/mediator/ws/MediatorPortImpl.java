@@ -48,7 +48,7 @@ public class MediatorPortImpl implements MediatorPortType {
 	    throwInvalidItemId("Product identifier cannot be empty or whitespace!");
 	}
 	if (Pattern.compile("[^a-zA-Z0-9]").matcher(productId).find()) {
-	    throwInvalidItemId("Product identifier must be alpha numeric!");
+	    throwInvalidItemId("Product identifier '" + productId + "' must be alpha numeric!");
 	}
 	try {
 	    UDDINaming uddiNaming = endpointManager.getUddiNaming();
@@ -62,9 +62,6 @@ public class MediatorPortImpl implements MediatorPortType {
 			continue;
 		    }
 		    String wsname = record.getOrgName();
-		    System.out.println(wsname);
-		    // System.out.println(product.getId() + " | " +
-		    // record.getOrgName());
 		    Item item = new Item(product.getDesc(), product.getPrice(), productId, wsname);
 		    ItemView itemFromGet = newItemView(item);
 		    int i = 0;
@@ -82,6 +79,7 @@ public class MediatorPortImpl implements MediatorPortType {
 	    }
 	    return result;
 	} catch (UDDINamingException | SupplierClientException e) {
+	    System.err.println(e.getClass());
 	    // continue;
 	}
 	return null;
@@ -134,7 +132,8 @@ public class MediatorPortImpl implements MediatorPortType {
 
 	    return operationResult;
 	} catch (UDDINamingException | SupplierClientException e) {
-	    // continue;
+	    System.err.println(e.getClass());
+	    //
 	}
 	return null;
     }
@@ -152,7 +151,7 @@ public class MediatorPortImpl implements MediatorPortType {
 	    throwInvalidCartId("Cart identifier cannot be empty or whitespace!");
 	}
 	if (Pattern.compile("[^a-zA-Z0-9]").matcher(cartId).find()) {
-	    throwInvalidCartId("Cart identifier must be alpha numeric!");
+	    throwInvalidCartId("Cart identifier '" + cartId + "' must be alpha numeric!");
 	}
 	// CreditCard verification
 	if (creditCardNr == null) {
@@ -163,23 +162,23 @@ public class MediatorPortImpl implements MediatorPortType {
 	    throwInvalidCreditCard("CreditCard identifier cannot be empty or whitespace!");
 	}
 	if (creditCardNr.length() != 16) {
-	    throwInvalidCreditCard("CreditCard identifier must have 16 digits!");
+	    throwInvalidCreditCard("CreditCard identifier (" + creditCardNr + ") must have 16 digits!");
 	}
 	if (Pattern.compile("[^0-9]").matcher(creditCardNr).find()) {
-	    throwInvalidCreditCard("CreditCard identifier must be numeric!");
+	    throwInvalidCreditCard("CreditCard identifier (" + creditCardNr + ") must be numeric!");
 	}
 	// Operation
 	Mediator mediator = Mediator.getInstance();
 	Cart cart = mediator.getCart(cartId);
 	if (cart == null) {
-	    throwInvalidCartId("Cart with cartId provided does not exist");
+	    throwInvalidCartId("Cart provided '" + cartId + "' does not exist");
 	}
 	if (cart.getItems().isEmpty()) {
-	    throwEmptyCart("Specified cart is empty");
+	    throwEmptyCart("Specified cart '" + cartId + "' is empty");
 	}
 	try {
 	    if (!mediator.validateCreditCard(creditCardNr)) {
-		throwInvalidCreditCard("Credit Card Number provided is not valid");
+		throwInvalidCreditCard("Credit Card Number provided (" + creditCardNr + ") is not valid");
 	    }
 	} catch (CreditCardClientException e) {
 	    throwInvalidCreditCard(e.getMessage());
@@ -207,10 +206,13 @@ public class MediatorPortImpl implements MediatorPortType {
     public void addToCart(String cartId, ItemIdView itemId, int itemQty) throws InvalidCartId_Exception,
 	    InvalidItemId_Exception, InvalidQuantity_Exception, NotEnoughItems_Exception {
 
-	ItemIdView ii = itemId;
-	// System.out.println("- addToCart( " + cartId + " , " + ii + " , " +
-	// ii.getProductId() + " , "
-	// + ii.getSupplierId() + " , " + itemQty + " )-");
+	if (itemId != null) {
+	    System.out.println("- addToCart( " + cartId + " , " + itemId + " , " + itemId.getProductId() + " , "
+		    + itemId.getSupplierId() + " , " + itemQty + " )-");
+	} else {
+	    System.out.println("- addToCart( " + cartId + " , " + itemId + " , " + itemQty + " )-");
+	}
+
 	// CartId verification
 	if (cartId == null || cartId == "null") {
 	    throwInvalidCartId("Cart identifier cannot be null!");
@@ -220,7 +222,7 @@ public class MediatorPortImpl implements MediatorPortType {
 	    throwInvalidCartId("Cart identifier cannot be empty or whitespace!");
 	}
 	if (Pattern.compile("[^a-zA-Z0-9]").matcher(cartId).find()) {
-	    throwInvalidCartId("Cart identifier must be alpha numeric!");
+	    throwInvalidCartId("Cart identifier '" + cartId + "' must be alpha numeric!");
 	}
 	// ItemId verification
 	if (itemId == null) {
@@ -234,17 +236,19 @@ public class MediatorPortImpl implements MediatorPortType {
 	}
 	String pid = itemId.getProductId().trim();
 	if (pid.length() == 0) {
-	    throwInvalidItemId("Item-Product identifier cannot be empty or whitespace!");
+	    throwInvalidItemId(
+		    "Item-Product identifier '" + itemId.getProductId() + "' cannot be empty or whitespace!");
 	}
 	String sid = itemId.getSupplierId().trim();
 	if (sid.length() == 0) {
-	    throwInvalidItemId("Item-Supplier identifier cannot be empty or whitespace!");
+	    throwInvalidItemId(
+		    "Item-Supplier identifier '" + itemId.getSupplierId() + "' cannot be empty or whitespace!");
 	}
 	if (Pattern.compile("[^a-zA-Z0-9]").matcher(itemId.getProductId()).find()) {
-	    throwInvalidItemId("Item-Product identifier must be alpha numeric!");
+	    throwInvalidItemId("Item-Product identifier '" + itemId.getProductId() + "' must be alpha numeric!");
 	}
 	if (itemQty <= 0) {
-	    throwInvalidQuantity("Quantity cannot be zero or less!");
+	    throwInvalidQuantity("Quantity (" + itemQty + ") cannot be zero or less!");
 	}
 	// Operation
 	Cart cart = null;
@@ -265,14 +269,16 @@ public class MediatorPortImpl implements MediatorPortType {
 	    SupplierClient client = new SupplierClient(uddiNaming.getUDDIUrl(), itemId.getSupplierId());
 	    ProductView product = client.getProduct(itemId.getProductId());
 	    if (product == null) {
-		throwInvalidItemId("Item does not exist");
+		throwInvalidItemId(
+			"The item '" + itemId.getProductId() + "@" + itemId.getSupplierId() + "' does not exist");
 	    }
 
 	    if (cart.getItemById(itemId) != null) {
 		itemQty += cart.getItemById(itemId).getQuantity();
 	    }
 	    if (itemQty > product.getQuantity()) {
-		throwNotEnoughItems("The selected item does not have the desired quantity!");
+		throwNotEnoughItems("The item '" + itemId.getProductId() + "@" + itemId.getSupplierId()
+			+ "' does not have the desired quantity (" + itemQty + ")!");
 	    }
 
 	    cart.addItemToCart(itemId, product.getDesc(), product.getPrice(), product.getId(), itemQty);
@@ -370,6 +376,7 @@ public class MediatorPortImpl implements MediatorPortType {
     private void throwEmptyCart(final String message) throws EmptyCart_Exception {
 	EmptyCart faultInfo = new EmptyCart();
 	faultInfo.message = message;
+	System.err.println(message);
 	throw new EmptyCart_Exception(message, faultInfo);
     }
 
@@ -377,6 +384,7 @@ public class MediatorPortImpl implements MediatorPortType {
     private void throwInvalidCartId(final String message) throws InvalidCartId_Exception {
 	InvalidCartId faultInfo = new InvalidCartId();
 	faultInfo.message = message;
+	System.err.println(message);
 	throw new InvalidCartId_Exception(message, faultInfo);
     }
 
@@ -384,6 +392,7 @@ public class MediatorPortImpl implements MediatorPortType {
     private void throwInvalidCreditCard(final String message) throws InvalidCreditCard_Exception {
 	InvalidCreditCard faultInfo = new InvalidCreditCard();
 	faultInfo.message = message;
+	System.err.println(message);
 	throw new InvalidCreditCard_Exception(message, faultInfo);
     }
 
@@ -391,6 +400,7 @@ public class MediatorPortImpl implements MediatorPortType {
     private void throwInvalidItemId(final String message) throws InvalidItemId_Exception {
 	InvalidItemId faultInfo = new InvalidItemId();
 	faultInfo.message = message;
+	System.err.println(message);
 	throw new InvalidItemId_Exception(message, faultInfo);
     }
 
@@ -398,6 +408,7 @@ public class MediatorPortImpl implements MediatorPortType {
     private void throwInvalidQuantity(final String message) throws InvalidQuantity_Exception {
 	InvalidQuantity faultInfo = new InvalidQuantity();
 	faultInfo.message = message;
+	System.err.println(message);
 	throw new InvalidQuantity_Exception(message, faultInfo);
     }
 
@@ -405,6 +416,7 @@ public class MediatorPortImpl implements MediatorPortType {
     private void throwInvalidText(final String message) throws InvalidText_Exception {
 	InvalidText faultInfo = new InvalidText();
 	faultInfo.message = message;
+	System.err.println(message);
 	throw new InvalidText_Exception(message, faultInfo);
     }
 
@@ -412,6 +424,7 @@ public class MediatorPortImpl implements MediatorPortType {
     private void throwNotEnoughItems(final String message) throws NotEnoughItems_Exception {
 	NotEnoughItems faultInfo = new NotEnoughItems();
 	faultInfo.message = message;
+	System.err.println(message);
 	throw new NotEnoughItems_Exception(message, faultInfo);
     }
 
