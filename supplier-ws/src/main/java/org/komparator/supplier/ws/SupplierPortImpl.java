@@ -4,14 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.annotation.Resource;
+import javax.jws.HandlerChain;
 import javax.jws.WebService;
+import javax.xml.ws.WebServiceContext;
 
 import org.komparator.supplier.domain.Product;
 import org.komparator.supplier.domain.Purchase;
 import org.komparator.supplier.domain.QuantityException;
 import org.komparator.supplier.domain.Supplier;
+import org.komparator.supplier.ws.handler.SOAPDateTimeServerHandler;
+import org.komparator.supplier.ws.handler.SOAPUUIDServerHandler;
 
 @WebService(endpointInterface = "org.komparator.supplier.ws.SupplierPortType", wsdlLocation = "supplier.wsdl", name = "SupplierWebService", portName = "SupplierPort", targetNamespace = "http://ws.supplier.komparator.org/", serviceName = "SupplierService")
+@HandlerChain(file = "/supplier_handler-chain.xml")
 public class SupplierPortImpl implements SupplierPortType {
 
     // end point manager
@@ -21,11 +27,32 @@ public class SupplierPortImpl implements SupplierPortType {
 	this.endpointManager = endpointManager;
     }
 
+    @Resource
+    private WebServiceContext webServiceContext;
+
     // Main operations -------------------------------------------------------
 
     @Override
     public ProductView getProduct(String productId) throws BadProductId_Exception {
-	System.out.println("- getProduct( " + productId + " )");
+	// check for timeout
+	String messageContext = (String) webServiceContext.getMessageContext()
+		.get(SOAPDateTimeServerHandler.DATETIME_PROPERTY);
+	boolean validDatetime = Boolean.parseBoolean(messageContext);
+	if (!validDatetime) {
+	    System.err.println("SOAP message timeout in getProduct()");
+	    return null;
+	}
+	// Check for unity of message
+	Supplier supplier = Supplier.getInstance();
+	messageContext = (String) webServiceContext.getMessageContext().get(SOAPUUIDServerHandler.UUID_PROPERTY);
+	if (supplier.getUuidList().contains(messageContext)) {
+	    System.err.println("SOAP message already came in getProduct()");
+	    return null;
+	}
+	supplier.addUuid(messageContext);
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- getProduct( " + productId + " )");
+	}
 	// check product id
 	if (productId == null)
 	    throwBadProductId("Product identifier cannot be null!");
@@ -33,7 +60,6 @@ public class SupplierPortImpl implements SupplierPortType {
 	if (productId.length() == 0)
 	    throwBadProductId("Product identifier cannot be empty or whitespace!");
 	// retrieve product
-	Supplier supplier = Supplier.getInstance();
 	Product p = supplier.getProduct(productId);
 	if (p != null) {
 	    ProductView pv = newProductView(p);
@@ -46,7 +72,25 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public List<ProductView> searchProducts(String descText) throws BadText_Exception {
-	System.out.println("- searchProducts( " + descText + " )");
+	// check for timeout
+	String messageContext = (String) webServiceContext.getMessageContext()
+		.get(SOAPDateTimeServerHandler.DATETIME_PROPERTY);
+	boolean validDatetime = Boolean.parseBoolean(messageContext);
+	if (!validDatetime) {
+	    System.err.println("SOAP message timeout in searchProducts()");
+	    return null;
+	}
+	// Check for unity of message
+	Supplier supplier = Supplier.getInstance();
+	messageContext = (String) webServiceContext.getMessageContext().get(SOAPUUIDServerHandler.UUID_PROPERTY);
+	if (supplier.getUuidList().contains(messageContext)) {
+	    System.err.println("SOAP message already came in searchProducts()");
+	    return null;
+	}
+	supplier.addUuid(messageContext);
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- searchProducts( " + descText + " )");
+	}
 	// Arguments verification
 	if (descText == null) {
 	    throwBadText("Search string cannot be null!");
@@ -56,7 +100,6 @@ public class SupplierPortImpl implements SupplierPortType {
 	    throwBadText("Search string cannot be empty!");
 	}
 	// core
-	Supplier supplier = Supplier.getInstance();
 	List<ProductView> searchResult = new ArrayList<ProductView>();
 	for (String productId : supplier.getProductsIDs()) {
 	    // Iterate through list of products
@@ -73,8 +116,25 @@ public class SupplierPortImpl implements SupplierPortType {
     @Override
     public String buyProduct(String productId, int quantity)
 	    throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
-
-	System.out.println("- createProduct( " + productId + " , " + quantity + " )");
+	// check for timeout
+	String messageContext = (String) webServiceContext.getMessageContext()
+		.get(SOAPDateTimeServerHandler.DATETIME_PROPERTY);
+	boolean validDatetime = Boolean.parseBoolean(messageContext);
+	if (!validDatetime) {
+	    System.err.println("SOAP message timeout in buyProduct()");
+	    return null;
+	}
+	// Check for unity of message
+	Supplier supplier = Supplier.getInstance();
+	messageContext = (String) webServiceContext.getMessageContext().get(SOAPUUIDServerHandler.UUID_PROPERTY);
+	if (supplier.getUuidList().contains(messageContext)) {
+	    System.err.println("SOAP message already came in buyProduct()");
+	    return null;
+	}
+	supplier.addUuid(messageContext);
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- createProduct( " + productId + " , " + quantity + " )");
+	}
 	// Arguments verification
 	if (productId == null) {
 	    throwBadProductId("Product identifier cannot be null!");
@@ -90,7 +150,6 @@ public class SupplierPortImpl implements SupplierPortType {
 	    throwBadQuantity("Quantity cannot be zero or less!");
 	}
 	// core
-	Supplier supplier = Supplier.getInstance();
 	Product product = supplier.getProduct(productId);
 	if (product == null) {
 	    // Checks if PId exists
@@ -115,6 +174,25 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public String ping(String name) {
+	// check for timeout
+	String messageContext = (String) webServiceContext.getMessageContext()
+		.get(SOAPDateTimeServerHandler.DATETIME_PROPERTY);
+	boolean validDatetime = Boolean.parseBoolean(messageContext);
+	if (!validDatetime) {
+	    System.err.println("SOAP message timeout in ping()");
+	    return null;
+	}
+	// Check for unity of message
+	Supplier supplier = Supplier.getInstance();
+	messageContext = (String) webServiceContext.getMessageContext().get(SOAPUUIDServerHandler.UUID_PROPERTY);
+	if (supplier.getUuidList().contains(messageContext)) {
+	    System.err.println("SOAP message already came in ping()");
+	    return null;
+	}
+	supplier.addUuid(messageContext);
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- ping()");
+	}
 	if (name == null || name.trim().length() == 0)
 	    name = "friend";
 
@@ -128,18 +206,54 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public void clear() {
-	System.out.println("- clear()");
+	// check for timeout
+	String messageContext = (String) webServiceContext.getMessageContext()
+		.get(SOAPDateTimeServerHandler.DATETIME_PROPERTY);
+	boolean validDatetime = Boolean.parseBoolean(messageContext);
+	if (!validDatetime) {
+	    System.err.println("SOAP message timeout in clear()");
+	    return;
+	}
+	// Check for unity of message
+	Supplier supplier = Supplier.getInstance();
+	messageContext = (String) webServiceContext.getMessageContext().get(SOAPUUIDServerHandler.UUID_PROPERTY);
+	if (supplier.getUuidList().contains(messageContext)) {
+	    System.err.println("SOAP message already came in clear()");
+	    return;
+	}
+	supplier.addUuid(messageContext);
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- clear()");
+	}
 	Supplier.getInstance().reset();
     }
 
     @Override
     public void createProduct(ProductView productToCreate) throws BadProductId_Exception, BadProduct_Exception {
-	if (productToCreate == null) {
-	    System.out.println("- createProduct( " + productToCreate + " )");
-	} else {
-	    System.out.println("- createProduct( " + productToCreate + " , " + productToCreate.getId() + " , "
-		    + productToCreate.getDesc() + " , " + productToCreate.getPrice() + " , "
-		    + productToCreate.getQuantity() + " )");
+	// check for timeout
+	String messageContext = (String) webServiceContext.getMessageContext()
+		.get(SOAPDateTimeServerHandler.DATETIME_PROPERTY);
+	boolean validDatetime = Boolean.parseBoolean(messageContext);
+	if (!validDatetime) {
+	    System.err.println("SOAP message timeout in createProduct()");
+	    return;
+	}
+	// Check for unity of message
+	Supplier supplier = Supplier.getInstance();
+	messageContext = (String) webServiceContext.getMessageContext().get(SOAPUUIDServerHandler.UUID_PROPERTY);
+	if (supplier.getUuidList().contains(messageContext)) {
+	    System.err.println("SOAP message already came in createProduct()");
+	    return;
+	}
+	supplier.addUuid(messageContext);
+	if (endpointManager.isVerbose()) {
+	    if (productToCreate == null) {
+		System.out.println("- createProduct( " + productToCreate + " )");
+	    } else {
+		System.out.println("- createProduct( " + productToCreate + " , " + productToCreate.getId() + " , "
+			+ productToCreate.getDesc() + " , " + productToCreate.getPrice() + " , "
+			+ productToCreate.getQuantity() + " )");
+	    }
 	}
 	// check null
 	if (productToCreate == null) {
@@ -173,8 +287,25 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public List<ProductView> listProducts() {
-	System.out.println("- listProducts()");
+	// check for timeout
+	String messageContext = (String) webServiceContext.getMessageContext()
+		.get(SOAPDateTimeServerHandler.DATETIME_PROPERTY);
+	boolean validDatetime = Boolean.parseBoolean(messageContext);
+	if (!validDatetime) {
+	    System.err.println("SOAP message timeout in listProducts()");
+	    return null;
+	}
+	// Check for unity of message
 	Supplier supplier = Supplier.getInstance();
+	messageContext = (String) webServiceContext.getMessageContext().get(SOAPUUIDServerHandler.UUID_PROPERTY);
+	if (supplier.getUuidList().contains(messageContext)) {
+	    System.err.println("SOAP message already came in listProducts()");
+	    return null;
+	}
+	supplier.addUuid(messageContext);
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- listProducts()");
+	}
 	List<ProductView> pvs = new ArrayList<ProductView>();
 	for (String pid : supplier.getProductsIDs()) {
 	    Product p = supplier.getProduct(pid);
@@ -186,8 +317,25 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public List<PurchaseView> listPurchases() {
-	System.out.println("- listPurchases()");
+	// check for timeout
+	String messageContext = (String) webServiceContext.getMessageContext()
+		.get(SOAPDateTimeServerHandler.DATETIME_PROPERTY);
+	boolean validDatetime = Boolean.parseBoolean(messageContext);
+	if (!validDatetime) {
+	    System.err.println("SOAP message timeout in listPurchases()");
+	    return null;
+	}
+	// Check for unity of message
 	Supplier supplier = Supplier.getInstance();
+	messageContext = (String) webServiceContext.getMessageContext().get(SOAPUUIDServerHandler.UUID_PROPERTY);
+	if (supplier.getUuidList().contains(messageContext)) {
+	    System.err.println("SOAP message already came in listPurchases()");
+	    return null;
+	}
+	supplier.addUuid(messageContext);
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- listPurchases()");
+	}
 	List<PurchaseView> pvs = new ArrayList<PurchaseView>();
 	for (String pid : supplier.getPurchasesIDs()) {
 	    Purchase p = supplier.getPurchase(pid);

@@ -1,0 +1,16 @@
+<handler-chains xmlns="http://java.sun.com/xml/ns/javaee">
+	<handler-chain>
+		<handler>
+			<handler-class>example.ws.handler.LoggingHandler</handler-class>
+		</handler>		
+		<handler>
+			<handler-class>org.komparator.supplier.ws.handler.SOAPDateTimeClientHandler</handler-class>
+		</handler>				
+		<handler>
+			<handler-class>org.komparator.supplier.ws.handler.SOAPUUIDClientHandler</handler-class>
+		</handler>
+		<handler>
+			<handler-class>example.ws.handler.LoggingHandler</handler-class>
+		</handler>
+	</handler-chain>
+</handler-chains>   
