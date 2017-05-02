@@ -2,13 +2,19 @@
 	<handler-chain>
 		<handler>
 			<handler-class>org.komparator.supplier.ws.handler.LoggingHandler</handler-class>
-		</handler>		
-		<handler>
-			<handler-class>org.komparator.supplier.ws.handler.SOAPDateTimeClientHandler</handler-class>
-		</handler>				
-		<handler>
-			<handler-class>org.komparator.supplier.ws.handler.SOAPUUIDClientHandler</handler-class>
 		</handler>
+		<handler>
+			<handler-class>org.komparator.supplier.ws.handler.SOAPUuidClientHandler</handler-class>
+		</handler>
+		<handler>
+			<handler-class>org.komparator.supplier.ws.handler.SOAPTimestampClientHandler</handler-class>
+		</handler>
+		<handler>
+			<handler-class>org.komparator.supplier.ws.handler.CipherClientHandler</handler-class>
+		</handler>
+		<!-- <handler> -->
+		<!-- <handler-class>org.komparator.supplier.ws.handler.AuthClientHandler</handler-class> -->
+		<!-- </handler> -->
 		<handler>
 			<handler-class>org.komparator.supplier.ws.handler.LoggingHandler</handler-class>
 		</handler>

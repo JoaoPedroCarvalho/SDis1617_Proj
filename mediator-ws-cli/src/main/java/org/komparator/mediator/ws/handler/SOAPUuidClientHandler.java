@@ -1,4 +1,4 @@
-package org.komparator.supplier.ws.handler;
+package org.komparator.mediator.ws.handler;
 
 import java.util.ArrayList;
 import java.util.Iterator;

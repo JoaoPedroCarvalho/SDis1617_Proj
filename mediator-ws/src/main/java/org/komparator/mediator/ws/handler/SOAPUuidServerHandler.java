@@ -1,4 +1,4 @@
-package org.komparator.supplier.ws.handler;
+package org.komparator.mediator.ws.handler;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,7 +16,7 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
-public class SOAPUuidClientHandler implements SOAPHandler<SOAPMessageContext> {
+public class SOAPUuidServerHandler implements SOAPHandler<SOAPMessageContext> {
     public static final String REQUEST_HEADER_UUID = "requestHeaderUuid";
     public static final String REQUEST_NS = "urn:client";
 
@@ -25,7 +25,7 @@ public class SOAPUuidClientHandler implements SOAPHandler<SOAPMessageContext> {
 
     private static final String HANDLER_FLAG = "sec";
 
-    public static final String CLASS_NAME = SOAPUuidClientHandler.class.getSimpleName();
+    public static final String CLASS_NAME = SOAPUuidServerHandler.class.getSimpleName();
 
     private List<String> uuidList = new ArrayList<String>();
 
@@ -52,7 +52,7 @@ public class SOAPUuidClientHandler implements SOAPHandler<SOAPMessageContext> {
 		SOAPHeader soapHeader = soapEnvelope.getHeader();
 		if (soapHeader == null)
 		    soapHeader = soapEnvelope.addHeader();
-		Name uuidName = soapEnvelope.createName(REQUEST_HEADER_UUID, HANDLER_FLAG, REQUEST_NS);
+		Name uuidName = soapEnvelope.createName(RESPONSE_HEADER_UUID, HANDLER_FLAG, RESPONSE_NS);
 		SOAPHeaderElement sHeaderElement = soapHeader.addHeaderElement(uuidName);
 		String uuid = UUID.randomUUID().toString();
 		sHeaderElement.addTextNode(uuid);
@@ -69,7 +69,7 @@ public class SOAPUuidClientHandler implements SOAPHandler<SOAPMessageContext> {
 		    System.err.println("MESSAGE HAS NO HEADER");
 		    return true;
 		}
-		Name uuidName = soapEnvelope.createName(RESPONSE_HEADER_UUID, HANDLER_FLAG, RESPONSE_NS);
+		Name uuidName = soapEnvelope.createName(REQUEST_HEADER_UUID, HANDLER_FLAG, REQUEST_NS);
 		Iterator elementIterator = soapHeader.getChildElements(uuidName);
 		if (!elementIterator.hasNext()) {
 		    System.err.println("MESSAGE HAS NO UUID");

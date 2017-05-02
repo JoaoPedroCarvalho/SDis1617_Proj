@@ -30,8 +30,6 @@ public class Supplier {
     /** Map of purchases. Also uses concurrent hash table implementation. */
     private Map<String, Purchase> purchases = new ConcurrentHashMap<>();
 
-    private List<String> uuidList = new ArrayList<String>();
-
     // For more information regarding concurrent collections, see:
     // https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/package-summary.html#package.description
 
@@ -139,13 +137,4 @@ public class Supplier {
 	}
 	return idsList;
     }
-
-    public List<String> getUuidList() {
-	return uuidList;
-    }
-
-    public void addUuid(String messageContext) {
-	uuidList.add(messageContext);
-    }
-
 }
