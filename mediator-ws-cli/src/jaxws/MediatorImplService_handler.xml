@@ -4,10 +4,10 @@
 			<handler-class>org.komparator.mediator.ws.handler.LoggingHandler</handler-class>
 		</handler>
 		<handler>
-			<handler-class>org.komparator.mediator.ws.handler.SOAPUuidClientHandler</handler-class>
+			<handler-class>org.komparator.mediator.ws.handler.SOAPTimestampClientHandler</handler-class>
 		</handler>
 		<handler>
-			<handler-class>org.komparator.mediator.ws.handler.SOAPTimestampClientHandler</handler-class>
+			<handler-class>org.komparator.mediator.ws.handler.SOAPUuidClientHandler</handler-class>
 		</handler>
 		<handler>
 			<handler-class>org.komparator.mediator.ws.handler.CipherClientHandler</handler-class>
