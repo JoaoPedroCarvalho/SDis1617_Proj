@@ -67,19 +67,19 @@ public class SOAPUuidClientHandler implements SOAPHandler<SOAPMessageContext> {
 		SOAPHeader soapHeader = soapEnvelope.getHeader();
 		if (soapHeader == null) {
 		    System.err.println("MESSAGE HAS NO HEADER");
-		    return true;
+		    return false;
 		}
 		Name uuidName = soapEnvelope.createName(RESPONSE_HEADER_UUID, HANDLER_FLAG, RESPONSE_NS);
 		Iterator elementIterator = soapHeader.getChildElements(uuidName);
 		if (!elementIterator.hasNext()) {
 		    System.err.println("MESSAGE HAS NO UUID");
-		    return true;
+		    return false;
 		}
 		SOAPElement sHeaderElement = (SOAPElement) elementIterator.next();
 		String headerValue = sHeaderElement.getValue();
 		if (uuidList.contains(headerValue)) {
 		    System.err.println("UUID ALREADY CAME");
-		    return true;
+		    return false;
 		}
 		uuidList.add(headerValue);
 

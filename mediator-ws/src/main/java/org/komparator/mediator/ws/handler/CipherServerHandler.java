@@ -86,7 +86,7 @@ public class CipherServerHandler implements SOAPHandler<SOAPMessageContext> {
 		    | InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
 		    | IllegalBlockSizeException | BadPaddingException e) {
 		System.err.printf("Failed to get SOAP header because of %s%n", e);
-
+		return false;
 	    }
 	}
 

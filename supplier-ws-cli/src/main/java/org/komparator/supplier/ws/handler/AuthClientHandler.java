@@ -96,13 +96,13 @@ public class AuthClientHandler implements SOAPHandler<SOAPMessageContext> {
 		SOAPHeader soapHeader = soapEnvelope.getHeader();
 		if (soapHeader == null) {
 		    System.err.println("MESSAGE HAS NO HEADER");
-		    return true;
+		    return false;
 		}
 		Name sigHeaderName = soapEnvelope.createName(RESPONSE_HEADER_AUTH, HANDLER_FLAG, RESPONSE_NS);
 		Iterator elementIterator = soapHeader.getChildElements(sigHeaderName);
 		if (!elementIterator.hasNext()) {
 		    System.err.println("MESSAGE HAS NO SIGNATURE");
-		    return true;
+		    return false;
 		}
 		SOAPElement sHeaderElement = (SOAPElement) elementIterator.next();
 		String headerValue = sHeaderElement.getValue();
@@ -126,11 +126,11 @@ public class AuthClientHandler implements SOAPHandler<SOAPMessageContext> {
 		Certificate trustedCACertificate = CertUtil.getX509CertificateFromResource(CA_CERTIFICATE);
 		if (!CertUtil.verifySignedCertificate(certificate,
 			CertUtil.getPublicKeyFromCertificate(trustedCACertificate))) {
-		    return true;
+		    return false;
 		}
 		if (!CertUtil.verifyDigitalSignature(CertUtil.SIGNATURE_ALGO, certificate, messageByteArray,
 			parseHexBinary(headerValue))) {
-		    return true;
+		    return false;
 		}
 
 	    } catch (Exception e) {

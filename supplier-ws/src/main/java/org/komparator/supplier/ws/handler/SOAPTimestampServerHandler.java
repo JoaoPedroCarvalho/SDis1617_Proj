@@ -53,23 +53,22 @@ public class SOAPTimestampServerHandler implements SOAPHandler<SOAPMessageContex
 		SOAPHeader soapHeader = soapEnvelope.getHeader();
 		if (soapHeader == null) {
 		    System.err.println("Header not found.");
-		    return true;
+		    return false;
 		}
 		Name timestampName = soapEnvelope.createName(REQUEST_HEADER_DATETIME, HANDLER_FLAG, REQUEST_NS);
 		Iterator elementIterator = soapHeader.getChildElements(timestampName);
 		if (!elementIterator.hasNext()) {
 		    System.err.println("MESSAGE HAS NO TIMESTAMP");
-		    return true;
+		    return false;
 		}
 		SOAPElement sHeaderElement = (SOAPElement) elementIterator.next();
 		String headerValue = sHeaderElement.getValue();
 		LocalDateTime timePast = LocalDateTime.parse(headerValue);
 		LocalDateTime timeNow = LocalDateTime.now();
-		boolean validDatetime;
 		if (timeNow.minusSeconds(MAX_ACCEPTED_TIME_IN_SECONDS).isAfter(timePast)) {
-		    validDatetime = false;
+		    return false;
 		} else {
-		    validDatetime = true;
+		    return true;
 		}
 	    } catch (SOAPException e) {
 		System.out.printf("Failed to get SOAP header because of %s%n", e);
