@@ -2,10 +2,12 @@ package org.komparator.mediator.ws.handler;
 
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
 
+import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -21,6 +23,7 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
+import org.komparator.security.CertUtil;
 import org.komparator.security.CryptoUtil;
 
 import pt.ulisboa.tecnico.sdis.ws.cli.CAClient;
@@ -31,6 +34,7 @@ public class CipherClientHandler implements SOAPHandler<SOAPMessageContext> {
     public static final String REQUEST_NS = "urn:client";
     public static final String RESPONSE_NS = "urn:server";
     private static final String MEDIATOR_ID = "T63_Mediator";
+    private static final String CA_CERTIFICATE = "ca.cer";
 
     /**
      * Gets the names of the header blocks that can be processed by this Handler
@@ -67,8 +71,15 @@ public class CipherClientHandler implements SOAPHandler<SOAPMessageContext> {
 					    "http://sec.sd.rnl.tecnico.ulisboa.pt:8081/ca?WSDL");
 
 				    String certificateString = caClient.getCertificate(MEDIATOR_ID);
-				    Certificate certificate = CryptoUtil.certificateStringToObject(certificateString);
-				    PublicKey key = CryptoUtil.getPublicKeyFromCertificate(certificate);
+				    Certificate certificate = CertUtil.certificateStringToObject(certificateString);
+
+				    Certificate trustedCACertificate = CertUtil
+					    .getX509CertificateFromResource(CA_CERTIFICATE);
+				    if (!CertUtil.verifySignedCertificate(certificate,
+					    CertUtil.getPublicKeyFromCertificate(trustedCACertificate))) {
+					return false;
+				    }
+				    PublicKey key = CertUtil.getPublicKeyFromCertificate(certificate);
 				    String ccNumber = bodyElementChild.getValue();
 				    byte[] sBEVCrypted = CryptoUtil.cipher(Cipher.ENCRYPT_MODE, key,
 					    ccNumber.getBytes());
@@ -100,6 +111,12 @@ public class CipherClientHandler implements SOAPHandler<SOAPMessageContext> {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	    } catch (CAClientException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    } catch (CertificateException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    } catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	    }

@@ -23,6 +23,7 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
+import org.komparator.security.CertUtil;
 import org.komparator.security.CryptoUtil;
 
 public class CipherServerHandler implements SOAPHandler<SOAPMessageContext> {
@@ -66,7 +67,7 @@ public class CipherServerHandler implements SOAPHandler<SOAPMessageContext> {
 			    while (bodyElementChildren.hasNext()) {
 				SOAPElement bodyElementChild = (SOAPElement) bodyElementChildren.next();
 				if (bodyElementChild.getElementName().getLocalName().equals("creditCardNr")) {
-				    PrivateKey key = CryptoUtil.getPrivateKeyFromKeyStoreResource(KEYSTORE_PATH,
+				    PrivateKey key = CertUtil.getPrivateKeyFromKeyStoreResource(KEYSTORE_PATH,
 					    GROUP_PASSWORD.toCharArray(), SERVICE_ID, GROUP_PASSWORD.toCharArray());
 				    String ccNumberCripted = bodyElementChild.getValue();
 				    System.out.println(key);

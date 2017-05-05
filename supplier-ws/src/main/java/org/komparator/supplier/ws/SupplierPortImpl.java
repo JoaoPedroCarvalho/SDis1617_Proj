@@ -8,11 +8,13 @@ import javax.annotation.Resource;
 import javax.jws.HandlerChain;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.handler.MessageContext;
 
 import org.komparator.supplier.domain.Product;
 import org.komparator.supplier.domain.Purchase;
 import org.komparator.supplier.domain.QuantityException;
 import org.komparator.supplier.domain.Supplier;
+import org.komparator.supplier.ws.handler.AuthServerHandler;
 
 @WebService(endpointInterface = "org.komparator.supplier.ws.SupplierPortType", wsdlLocation = "supplier.wsdl", name = "SupplierWebService", portName = "SupplierPort", targetNamespace = "http://ws.supplier.komparator.org/", serviceName = "SupplierService")
 @HandlerChain(file = "/supplier_handler-chain.xml")
@@ -32,6 +34,8 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public ProductView getProduct(String productId) throws BadProductId_Exception {
+	MessageContext messageContext = webServiceContext.getMessageContext();
+	messageContext.put(AuthServerHandler.SUPPLIER_INDEX_PROPERTY, endpointManager.getWsName());
 	Supplier supplier = Supplier.getInstance();
 	if (endpointManager.isVerbose()) {
 	    System.out.println("- getProduct( " + productId + " )");
@@ -55,6 +59,8 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public List<ProductView> searchProducts(String descText) throws BadText_Exception {
+	MessageContext messageContext = webServiceContext.getMessageContext();
+	messageContext.put(AuthServerHandler.SUPPLIER_INDEX_PROPERTY, endpointManager.getWsName());
 	Supplier supplier = Supplier.getInstance();
 	if (endpointManager.isVerbose()) {
 	    System.out.println("- searchProducts( " + descText + " )");
@@ -84,6 +90,8 @@ public class SupplierPortImpl implements SupplierPortType {
     @Override
     public String buyProduct(String productId, int quantity)
 	    throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
+	MessageContext messageContext = webServiceContext.getMessageContext();
+	messageContext.put(AuthServerHandler.SUPPLIER_INDEX_PROPERTY, endpointManager.getWsName());
 	Supplier supplier = Supplier.getInstance();
 	if (endpointManager.isVerbose()) {
 	    System.out.println("- createProduct( " + productId + " , " + quantity + " )");
@@ -127,6 +135,8 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public String ping(String name) {
+	MessageContext messageContext = webServiceContext.getMessageContext();
+	messageContext.put(AuthServerHandler.SUPPLIER_INDEX_PROPERTY, endpointManager.getWsName());
 	if (endpointManager.isVerbose()) {
 	    System.out.println("- ping()");
 	}
@@ -143,6 +153,8 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public void clear() {
+	MessageContext messageContext = webServiceContext.getMessageContext();
+	messageContext.put(AuthServerHandler.SUPPLIER_INDEX_PROPERTY, endpointManager.getWsName());
 	if (endpointManager.isVerbose()) {
 	    System.out.println("- clear()");
 	}
@@ -151,6 +163,8 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public void createProduct(ProductView productToCreate) throws BadProductId_Exception, BadProduct_Exception {
+	MessageContext messageContext = webServiceContext.getMessageContext();
+	messageContext.put(AuthServerHandler.SUPPLIER_INDEX_PROPERTY, endpointManager.getWsName());
 	if (endpointManager.isVerbose()) {
 	    if (productToCreate == null) {
 		System.out.println("- createProduct( " + productToCreate + " )");
@@ -192,6 +206,8 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public List<ProductView> listProducts() {
+	MessageContext messageContext = webServiceContext.getMessageContext();
+	messageContext.put(AuthServerHandler.SUPPLIER_INDEX_PROPERTY, endpointManager.getWsName());
 	Supplier supplier = Supplier.getInstance();
 	if (endpointManager.isVerbose()) {
 	    System.out.println("- listProducts()");
@@ -207,6 +223,8 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public List<PurchaseView> listPurchases() {
+	MessageContext messageContext = webServiceContext.getMessageContext();
+	messageContext.put(AuthServerHandler.SUPPLIER_INDEX_PROPERTY, endpointManager.getWsName());
 	Supplier supplier = Supplier.getInstance();
 	if (endpointManager.isVerbose()) {
 	    System.out.println("- listPurchases()");
