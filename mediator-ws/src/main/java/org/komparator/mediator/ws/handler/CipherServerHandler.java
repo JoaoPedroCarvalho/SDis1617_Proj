@@ -1,12 +1,13 @@
 package org.komparator.mediator.ws.handler;
 
 import static javax.xml.bind.DatatypeConverter.parseHexBinary;
-import static javax.xml.bind.DatatypeConverter.printHexBinary;
 
-import java.security.InvalidAlgorithmParameterException;
+import java.io.FileNotFoundException;
 import java.security.InvalidKeyException;
-import java.security.Key;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.UnrecoverableKeyException;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -14,13 +15,10 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.soap.Name;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPHeader;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
@@ -29,12 +27,11 @@ import org.komparator.security.CryptoUtil;
 
 public class CipherServerHandler implements SOAPHandler<SOAPMessageContext> {
 
-    private static final String SYM_ALGORITHM = CryptoUtil.SYM_ALGORITHM;
-    private static final String SYM_KEY = CryptoUtil.SYM_KEY;
-
     public static final String REQUEST_NS = "urn:client";
-
     public static final String RESPONSE_NS = "urn:server";
+    private static final String GROUP_PASSWORD = "gm8AvvUD";
+    private static final String SERVICE_ID = "t63_mediator";
+    private static final String KEYSTORE_PATH = "T63_Mediator.jks";
 
     /**
      * Gets the names of the header blocks that can be processed by this Handler
@@ -53,187 +50,43 @@ public class CipherServerHandler implements SOAPHandler<SOAPMessageContext> {
     public boolean handleMessage(SOAPMessageContext smc) {
 	Boolean outbound = (Boolean) smc.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 	if (outbound) {
-	    // outbound message
-	    try {
-		SOAPEnvelope soapEnvelope = smc.getMessage().getSOAPPart().getEnvelope();
-		SOAPBody soapBody = soapEnvelope.getBody();
-		// check Body
-		if (soapBody != null) {
-		    // for each body
-		    Key key = CryptoUtil.generateSymKey();
-		    Iterator itBodies = soapBody.getChildElements();
-		    while (itBodies.hasNext()) {
-			SOAPElement sBElement = (SOAPElement) itBodies.next();
-			String sBElementValue = sBElement.getValue();
-			if (sBElementValue == null) {
-			    Iterator itBodyChildren = sBElement.getChildElements();
-			    while (itBodyChildren.hasNext()) {
-				SOAPElement sBElementChild = (SOAPElement) itBodyChildren.next();
-				String sBElementValueChild = sBElementChild.getValue();
-				if (sBElementValueChild != null) {
-				    byte[] sBEVCrypted = CryptoUtil.cipher(Cipher.ENCRYPT_MODE, SYM_ALGORITHM, key,
-					    sBElementValueChild.getBytes());
-				    sBElementChild.removeContents();
-				    sBElementChild.addTextNode(printHexBinary(sBEVCrypted));
-				}
-			    }
-			} else {
-			    byte[] sBEVCrypted = CryptoUtil.cipher(Cipher.ENCRYPT_MODE, SYM_ALGORITHM, key,
-				    sBElementValue.getBytes());
-			    sBElement.removeContents();
-			    sBElement.addTextNode(printHexBinary(sBEVCrypted));
-			}
-		    }
-		    Name keyName = soapEnvelope.createName("bodyKey", "crp", RESPONSE_NS);
-		    SOAPElement keyElement = soapEnvelope.getHeader().addHeaderElement(keyName);
-		    keyElement.addTextNode(printHexBinary(key.getEncoded()));
-		}
-
-		SOAPHeader soapHeader = soapEnvelope.getHeader();
-		// check header
-		if (soapHeader != null) {
-		    // for each body
-		    Iterator itHeaders = soapHeader.getChildElements();
-		    while (itHeaders.hasNext()) {
-			SOAPElement sHElement = (SOAPElement) itHeaders.next();
-			String sHElementValue = sHElement.getValue();
-			if (sHElementValue != null) {
-			    Key key = CryptoUtil.generateSymKey();
-			    byte[] sHEVCrypted;
-			    if (sHElement.getElementName()
-				    .equals(soapEnvelope.createName("bodyKey", "crp", RESPONSE_NS))) {
-				sHEVCrypted = CryptoUtil.cipher(Cipher.ENCRYPT_MODE, SYM_ALGORITHM, key,
-					parseHexBinary(sHElementValue));
-			    } else {
-				sHEVCrypted = CryptoUtil.cipher(Cipher.ENCRYPT_MODE, SYM_ALGORITHM, key,
-					sHElementValue.getBytes());
-			    }
-			    sHElement.removeContents();
-			    sHElement.setAttribute("key", printHexBinary(key.getEncoded()));
-			    sHElement.addTextNode(printHexBinary(sHEVCrypted));
-			} else {
-			    System.err.println("HEADER HAS CHILD!!!!");
-			}
-		    }
-		}
-	    } catch (SOAPException e) {
-		System.err.printf("Failed to add SOAP header because of %s%n", e);
-	    } catch (NoSuchAlgorithmException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	    } catch (InvalidKeyException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	    } catch (NoSuchPaddingException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	    } catch (IllegalBlockSizeException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	    } catch (BadPaddingException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	    } catch (InvalidAlgorithmParameterException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	    }
-
-	} else
-
-	{
+	    return true;
+	} else {
 	    // inbound message
 	    try {
 		SOAPEnvelope soapEnvelope = smc.getMessage().getSOAPPart().getEnvelope();
-
-		SOAPHeader soapHeader = soapEnvelope.getHeader();
-		// check header
-		if (soapHeader != null) {
-		    // for each body
-		    Iterator itHeaders = soapHeader.getChildElements();
-		    while (itHeaders.hasNext()) {
-			SOAPElement sHElement = (SOAPElement) itHeaders.next();
-			String sHEVCrypted = sHElement.getValue();
-
-			if (sHEVCrypted != null) {
-			    byte[] keyString = parseHexBinary(sHElement.getAttribute("key"));
-			    Key key = new SecretKeySpec(keyString, 0, keyString.length, SYM_KEY);
-			    byte[] sHElementValue = CryptoUtil.cipher(Cipher.DECRYPT_MODE, SYM_ALGORITHM, key,
-				    parseHexBinary(sHEVCrypted));
-			    sHElement.removeAttribute("key");
-			    sHElement.removeContents();
-			    if (sHElement.getElementName()
-				    .equals(soapEnvelope.createName("bodyKey", "crp", REQUEST_NS))) {
-				sHElement.addTextNode(printHexBinary(sHElementValue));
-			    } else {
-				sHElement.addTextNode(new String(sHElementValue));
-			    }
-			} else {
-			    System.err.println("HEADER HAS CHILD!!!!");
-			}
-		    }
-		}
 		SOAPBody soapBody = soapEnvelope.getBody();
 		// check Body
 		if (soapBody != null) {
-		    // for each body
-		    Name keyName = soapEnvelope.createName("bodyKey", "crp", REQUEST_NS);
-		    Iterator it = soapHeader.getChildElements(keyName);
-		    if (!it.hasNext()) {
-			return true;
-		    }
-		    SOAPElement elementKey = (SOAPElement) it.next();
-		    byte[] keyString = parseHexBinary(elementKey.getValue());
-		    Key key = new SecretKeySpec(keyString, 0, keyString.length, SYM_KEY);
+		    Iterator sBodyElements = soapBody.getChildElements();
+		    while (sBodyElements.hasNext()) {
+			SOAPElement bodyElement = (SOAPElement) sBodyElements.next();
+			if (bodyElement.getElementName().getLocalName().equals("buyCart")) {
+			    Iterator bodyElementChildren = bodyElement.getChildElements();
+			    while (bodyElementChildren.hasNext()) {
+				SOAPElement bodyElementChild = (SOAPElement) bodyElementChildren.next();
+				if (bodyElementChild.getElementName().getLocalName().equals("creditCardNr")) {
+				    PrivateKey key = CryptoUtil.getPrivateKeyFromKeyStoreResource(KEYSTORE_PATH,
+					    GROUP_PASSWORD.toCharArray(), SERVICE_ID, GROUP_PASSWORD.toCharArray());
+				    String ccNumberCripted = bodyElementChild.getValue();
+				    System.out.println(key);
+				    byte[] ccNumber = CryptoUtil.cipher(Cipher.DECRYPT_MODE, key,
+					    parseHexBinary(ccNumberCripted));
+				    bodyElementChild.removeContents();
+				    bodyElementChild.addTextNode(new String(ccNumber));
 
-		    Iterator itBodies = soapBody.getChildElements();
-		    while (itBodies.hasNext()) {
-			SOAPElement sBElement = (SOAPElement) itBodies.next();
-			String sBEVCrypted = sBElement.getValue();
-
-			if (sBEVCrypted == null) {
-			    Iterator itBodyChildren = sBElement.getChildElements();
-			    while (itBodyChildren.hasNext()) {
-				SOAPElement sBElementChild = (SOAPElement) itBodyChildren.next();
-				String sBEVCryptedChild = sBElementChild.getValue();
-
-				if (sBEVCryptedChild != null) {
-				    byte[] sBElementValueChild = CryptoUtil.cipher(Cipher.DECRYPT_MODE, SYM_ALGORITHM,
-					    key, parseHexBinary(sBEVCryptedChild));
-				    sBElementChild.removeContents();
-				    sBElementChild.addTextNode(new String(sBElementValueChild));
+				    return true;
 				}
 			    }
-			} else {
-			    byte[] sBElementValue = CryptoUtil.cipher(Cipher.DECRYPT_MODE, SYM_ALGORITHM, key,
-				    parseHexBinary(sBEVCrypted));
-			    sBElement.removeContents();
-			    sBElement.addTextNode(new String(sBElementValue));
 			}
 		    }
-
 		}
-	    } catch (SOAPException e) {
+	    } catch (SOAPException | UnrecoverableKeyException | FileNotFoundException | KeyStoreException
+		    | InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
+		    | IllegalBlockSizeException | BadPaddingException e) {
 		System.err.printf("Failed to get SOAP header because of %s%n", e);
-	    } catch (InvalidKeyException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	    } catch (NoSuchAlgorithmException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	    } catch (NoSuchPaddingException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	    } catch (IllegalBlockSizeException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	    } catch (BadPaddingException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	    } catch (InvalidAlgorithmParameterException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	    }
 
+	    }
 	}
 
 	return true;

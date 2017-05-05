@@ -11,9 +11,6 @@
 		<handler>
 			<handler-class>org.komparator.supplier.ws.handler.SOAPTimestampServerHandler</handler-class>
 		</handler>
-		<handler>
-			<handler-class>org.komparator.supplier.ws.handler.CipherServerHandler</handler-class>
-		</handler>
 		<!-- <handler> -->
 		<!-- <handler-class>org.komparator.supplier.ws.handler.AuthServerHandler</handler-class> -->
 		<!-- </handler> -->
