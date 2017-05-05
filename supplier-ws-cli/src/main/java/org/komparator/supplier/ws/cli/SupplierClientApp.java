@@ -22,7 +22,6 @@ public class SupplierClientApp {
 
 	// Create client
 	SupplierClient client = null;
-	System.out.println(uddiURL + wsName + wsURL);
 	if (wsURL != null) {
 	    System.out.printf("Creating client for server at %s%n", wsURL);
 	    client = new SupplierClient(wsURL);
