@@ -5,7 +5,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.annotation.Resource;
+import javax.jws.HandlerChain;
 import javax.jws.WebService;
+import javax.xml.ws.WebServiceContext;
 
 import org.komparator.mediator.domain.Cart;
 import org.komparator.mediator.domain.Item;
@@ -25,6 +28,7 @@ import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINamingException;
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDIRecord;
 
 @WebService(endpointInterface = "org.komparator.mediator.ws.MediatorPortType", wsdlLocation = "mediator.wsdl", name = "MediatorWebService", portName = "MediatorPort", targetNamespace = "http://ws.mediator.komparator.org/", serviceName = "MediatorService")
+@HandlerChain(file = "/mediator_handler-chain.xml")
 public class MediatorPortImpl implements MediatorPortType {
 
     // end point manager
@@ -34,11 +38,17 @@ public class MediatorPortImpl implements MediatorPortType {
 	this.endpointManager = endpointManager;
     }
 
+    @Resource
+    private WebServiceContext webServiceContext;
+
     // Main operations -------------------------------------------------------
 
     @Override
     public List<ItemView> getItems(String productId) throws InvalidItemId_Exception {
-	System.out.println("- getItems( " + productId + " ) -");
+
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- getItems( " + productId + " )");
+	}
 	// Arguments verification
 	if (productId == null) {
 	    throwInvalidItemId("Product identifier cannot be null!");
@@ -87,6 +97,9 @@ public class MediatorPortImpl implements MediatorPortType {
 
     @Override
     public List<ItemView> searchItems(String descText) throws InvalidText_Exception {
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- searchItems( " + descText + " )");
+	}
 	// Arguments verification
 	if (descText == null) {
 	    throwInvalidText("Search string cannot be null");
@@ -141,7 +154,9 @@ public class MediatorPortImpl implements MediatorPortType {
     @Override
     public ShoppingResultView buyCart(String cartId, String creditCardNr)
 	    throws EmptyCart_Exception, InvalidCartId_Exception, InvalidCreditCard_Exception {
-	System.out.println("- buyCart( " + cartId + " , " + creditCardNr + " )-");
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- buyCart( " + cartId + " , " + creditCardNr + " )");
+	}
 	// CartId verification
 	if (cartId == null) {
 	    throwInvalidCartId("Cart identifier cannot be null!");
@@ -205,12 +220,13 @@ public class MediatorPortImpl implements MediatorPortType {
     @Override
     public void addToCart(String cartId, ItemIdView itemId, int itemQty) throws InvalidCartId_Exception,
 	    InvalidItemId_Exception, InvalidQuantity_Exception, NotEnoughItems_Exception {
-
-	if (itemId != null) {
-	    System.out.println("- addToCart( " + cartId + " , " + itemId + " , " + itemId.getProductId() + " , "
-		    + itemId.getSupplierId() + " , " + itemQty + " )-");
-	} else {
-	    System.out.println("- addToCart( " + cartId + " , " + itemId + " , " + itemQty + " )-");
+	if (endpointManager.isVerbose()) {
+	    if (itemId != null) {
+		System.out.println("- addToCart( " + cartId + " , " + itemId + " , " + itemId.getProductId() + " , "
+			+ itemId.getSupplierId() + " , " + itemQty + " )-");
+	    } else {
+		System.out.println("- addToCart( " + cartId + " , " + itemId + " , " + itemQty + " )-");
+	    }
 	}
 
 	// CartId verification
@@ -293,7 +309,9 @@ public class MediatorPortImpl implements MediatorPortType {
 
     @Override
     public void clear() {
-	System.out.println("- clear()");
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- clear()");
+	}
 	Mediator.getInstance().reset();
 	try {
 	    UDDINaming uddiNaming = endpointManager.getUddiNaming();
@@ -310,7 +328,9 @@ public class MediatorPortImpl implements MediatorPortType {
 
     @Override
     public List<CartView> listCarts() {
-	System.out.println("- listCarts()");
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- listCarts()");
+	}
 	Mediator mediator = Mediator.getInstance();
 	List<CartView> cartList = new ArrayList<CartView>();
 	for (String cartId : mediator.getCartsIds()) {
@@ -323,6 +343,9 @@ public class MediatorPortImpl implements MediatorPortType {
 
     @Override
     public String ping(String arg0) {
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- ping()");
+	}
 	String pong = "\n";
 	if (arg0 == null || arg0.trim().length() == 0) {
 	    arg0 = "friend";
@@ -345,7 +368,9 @@ public class MediatorPortImpl implements MediatorPortType {
 
     @Override
     public List<ShoppingResultView> shopHistory() {
-	System.out.println("- shopHistory()");
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- shopHistory()");
+	}
 	Mediator mediator = Mediator.getInstance();
 	List<ShoppingResultView> shoppingResultList = new ArrayList<ShoppingResultView>();
 	for (String shoppingResultId : mediator.getShoppingResultsIds()) {

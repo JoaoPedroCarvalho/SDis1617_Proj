@@ -16,6 +16,7 @@ import org.komparator.supplier.ws.ProductView;
 import org.komparator.supplier.ws.PurchaseView;
 import org.komparator.supplier.ws.SupplierPortType;
 import org.komparator.supplier.ws.SupplierService;
+import org.komparator.supplier.ws.handler.AuthClientHandler;
 
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
 
@@ -113,42 +114,66 @@ public class SupplierClient implements SupplierPortType {
 
     @Override
     public ProductView getProduct(String productId) throws BadProductId_Exception {
+	BindingProvider bindingProvider = (BindingProvider) port;
+	Map<String, Object> requestContext = bindingProvider.getRequestContext();
+	requestContext.put(AuthClientHandler.UDDI_URL_PROPERTY, this.uddiURL);
 	return port.getProduct(productId);
     }
 
     @Override
     public List<ProductView> searchProducts(String descText) throws BadText_Exception {
+	BindingProvider bindingProvider = (BindingProvider) port;
+	Map<String, Object> requestContext = bindingProvider.getRequestContext();
+	requestContext.put(AuthClientHandler.UDDI_URL_PROPERTY, this.uddiURL);
 	return port.searchProducts(descText);
     }
 
     @Override
     public String buyProduct(String productId, int quantity)
 	    throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
+	BindingProvider bindingProvider = (BindingProvider) port;
+	Map<String, Object> requestContext = bindingProvider.getRequestContext();
+	requestContext.put(AuthClientHandler.UDDI_URL_PROPERTY, this.uddiURL);
 	return port.buyProduct(productId, quantity);
     }
 
     @Override
     public String ping(String name) {
+	BindingProvider bindingProvider = (BindingProvider) port;
+	Map<String, Object> requestContext = bindingProvider.getRequestContext();
+	requestContext.put(AuthClientHandler.UDDI_URL_PROPERTY, this.uddiURL);
 	return port.ping(name);
     }
 
     @Override
     public void clear() {
+	BindingProvider bindingProvider = (BindingProvider) port;
+	Map<String, Object> requestContext = bindingProvider.getRequestContext();
+	requestContext.put(AuthClientHandler.UDDI_URL_PROPERTY, this.uddiURL);
 	port.clear();
     }
 
     @Override
     public void createProduct(ProductView productToCreate) throws BadProductId_Exception, BadProduct_Exception {
+	BindingProvider bindingProvider = (BindingProvider) port;
+	Map<String, Object> requestContext = bindingProvider.getRequestContext();
+	requestContext.put(AuthClientHandler.UDDI_URL_PROPERTY, this.uddiURL);
 	port.createProduct(productToCreate);
     }
 
     @Override
     public List<ProductView> listProducts() {
+	BindingProvider bindingProvider = (BindingProvider) port;
+	Map<String, Object> requestContext = bindingProvider.getRequestContext();
+	requestContext.put(AuthClientHandler.UDDI_URL_PROPERTY, this.uddiURL);
 	return port.listProducts();
     }
 
     @Override
     public List<PurchaseView> listPurchases() {
+	BindingProvider bindingProvider = (BindingProvider) port;
+	Map<String, Object> requestContext = bindingProvider.getRequestContext();
+	requestContext.put(AuthClientHandler.UDDI_URL_PROPERTY, this.uddiURL);
 	return port.listPurchases();
     }
 
