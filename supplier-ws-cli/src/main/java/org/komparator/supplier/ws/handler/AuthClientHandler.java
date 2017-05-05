@@ -1,5 +1,8 @@
 package org.komparator.supplier.ws.handler;
 
+import static javax.xml.bind.DatatypeConverter.parseHexBinary;
+import static javax.xml.bind.DatatypeConverter.printHexBinary;
+
 import java.io.ByteArrayOutputStream;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
@@ -66,6 +69,7 @@ public class AuthClientHandler implements SOAPHandler<SOAPMessageContext> {
 	    try {
 		SOAPMessage soapMessage = smc.getMessage();
 		byte[] messageByteArray = SOAPMessageToByteArray(soapMessage);
+		System.out.println("99");
 		PrivateKey key = CertUtil.getPrivateKeyFromKeyStoreResource(KEYSTORE_PATH, GROUP_PASSWORD.toCharArray(),
 			SERVICE_ID, GROUP_PASSWORD.toCharArray());
 		byte[] soapMessageSigned = CertUtil.makeDigitalSignature(CertUtil.SIGNATURE_ALGO, key,
@@ -76,7 +80,7 @@ public class AuthClientHandler implements SOAPHandler<SOAPMessageContext> {
 		    soapHeader = soapEnvelope.addHeader();
 		Name sigHeaderName = soapEnvelope.createName(REQUEST_HEADER_AUTH, HANDLER_FLAG, REQUEST_NS);
 		SOAPHeaderElement sHeaderElement = soapHeader.addHeaderElement(sigHeaderName);
-		sHeaderElement.addTextNode(new String(soapMessageSigned));
+		sHeaderElement.addTextNode(printHexBinary(soapMessageSigned));
 
 	    } catch (Exception e) {
 		// TODO Auto-generated catch block
@@ -106,7 +110,6 @@ public class AuthClientHandler implements SOAPHandler<SOAPMessageContext> {
 		CAClient caClient = new CAClient("http://sec.sd.rnl.tecnico.ulisboa.pt:8081/ca?WSDL");
 
 		String url = (String) smc.get("javax.xml.ws.service.endpoint.address");
-
 		String server_id = null;
 		UDDINaming uddiNaming = new UDDINaming((String) smc.get(UDDI_URL_PROPERTY));
 		Collection<UDDIRecord> records = uddiNaming.listRecords("T63_Supplier%");
@@ -120,15 +123,14 @@ public class AuthClientHandler implements SOAPHandler<SOAPMessageContext> {
 		}
 		String certificateString = caClient.getCertificate(server_id);
 		Certificate certificate = CertUtil.certificateStringToObject(certificateString);
-
 		Certificate trustedCACertificate = CertUtil.getX509CertificateFromResource(CA_CERTIFICATE);
 		if (!CertUtil.verifySignedCertificate(certificate,
 			CertUtil.getPublicKeyFromCertificate(trustedCACertificate))) {
-		    return false;
+		    return true;
 		}
 		if (!CertUtil.verifyDigitalSignature(CertUtil.SIGNATURE_ALGO, certificate, messageByteArray,
-			headerValue.getBytes())) {
-		    return false;
+			parseHexBinary(headerValue))) {
+		    return true;
 		}
 
 	    } catch (Exception e) {

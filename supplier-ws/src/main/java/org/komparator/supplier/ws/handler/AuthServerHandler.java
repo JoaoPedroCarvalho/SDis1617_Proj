@@ -1,5 +1,8 @@
 package org.komparator.supplier.ws.handler;
 
+import static javax.xml.bind.DatatypeConverter.parseHexBinary;
+import static javax.xml.bind.DatatypeConverter.printHexBinary;
+
 import java.io.ByteArrayOutputStream;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
@@ -40,8 +43,6 @@ public class AuthServerHandler implements SOAPHandler<SOAPMessageContext> {
     private static final String HANDLER_FLAG = "auth";
     private static final String MEDIATOR_ID = "T63_Mediator";
     private static final String CA_CERTIFICATE = "ca.cer";
-    private String service_index;
-    private String keystore_path = "T63_Supplier" + service_index + ".jks";
 
     /**
      * Gets the names of the header blocks that can be processed by this Handler
@@ -59,15 +60,17 @@ public class AuthServerHandler implements SOAPHandler<SOAPMessageContext> {
     @Override
     public boolean handleMessage(SOAPMessageContext smc) {
 	Boolean outbound = (Boolean) smc.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
-	String propertyValue = (String) smc.get(SUPPLIER_INDEX_PROPERTY);
-	this.service_index = propertyValue.substring(12);
 	if (outbound) {
 
 	    try {
+		String propertyValue = (String) smc.get(SUPPLIER_INDEX_PROPERTY);
+		String service_index = propertyValue.substring(12);
+		String keystore_path = "T63_Supplier" + service_index + ".jks";
 		SOAPMessage soapMessage = smc.getMessage();
 		byte[] messageByteArray = SOAPMessageToByteArray(soapMessage);
 		PrivateKey key = CertUtil.getPrivateKeyFromKeyStoreResource(keystore_path, GROUP_PASSWORD.toCharArray(),
 			SERVICE_ID + service_index, GROUP_PASSWORD.toCharArray());
+
 		byte[] soapMessageSigned = CertUtil.makeDigitalSignature(CertUtil.SIGNATURE_ALGO, key,
 			messageByteArray);
 		SOAPEnvelope soapEnvelope = soapMessage.getSOAPPart().getEnvelope();
@@ -76,7 +79,7 @@ public class AuthServerHandler implements SOAPHandler<SOAPMessageContext> {
 		    soapHeader = soapEnvelope.addHeader();
 		Name sigHeaderName = soapEnvelope.createName(RESPONSE_HEADER_AUTH, HANDLER_FLAG, RESPONSE_NS);
 		SOAPHeaderElement sHeaderElement = soapHeader.addHeaderElement(sigHeaderName);
-		sHeaderElement.addTextNode(new String(soapMessageSigned));
+		sHeaderElement.addTextNode(printHexBinary(soapMessageSigned));
 
 	    } catch (Exception e) {
 		// TODO Auto-generated catch block
@@ -87,13 +90,13 @@ public class AuthServerHandler implements SOAPHandler<SOAPMessageContext> {
 	    // inbound message
 	    try {
 		SOAPMessage soapMessage = smc.getMessage();
-		byte[] messageByteArray = SOAPMessageToByteArray(soapMessage);
 		SOAPEnvelope soapEnvelope = smc.getMessage().getSOAPPart().getEnvelope();
 		SOAPHeader soapHeader = soapEnvelope.getHeader();
 		if (soapHeader == null) {
 		    System.err.println("MESSAGE HAS NO HEADER");
 		    return true;
 		}
+
 		Name sigHeaderName = soapEnvelope.createName(REQUEST_HEADER_AUTH, HANDLER_FLAG, REQUEST_NS);
 		Iterator elementIterator = soapHeader.getChildElements(sigHeaderName);
 		if (!elementIterator.hasNext()) {
@@ -111,11 +114,13 @@ public class AuthServerHandler implements SOAPHandler<SOAPMessageContext> {
 		Certificate trustedCACertificate = CertUtil.getX509CertificateFromResource(CA_CERTIFICATE);
 		if (!CertUtil.verifySignedCertificate(certificate,
 			CertUtil.getPublicKeyFromCertificate(trustedCACertificate))) {
-		    return false;
+		    return true;
 		}
+
+		byte[] messageByteArray = SOAPMessageToByteArray(soapMessage);
 		if (!CertUtil.verifyDigitalSignature(CertUtil.SIGNATURE_ALGO, certificate, messageByteArray,
-			headerValue.getBytes())) {
-		    return false;
+			parseHexBinary(headerValue))) {
+		    return true;
 		}
 
 	    } catch (Exception e) {

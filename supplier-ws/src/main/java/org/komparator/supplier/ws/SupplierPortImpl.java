@@ -135,11 +135,11 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public String ping(String name) {
-	MessageContext messageContext = webServiceContext.getMessageContext();
-	messageContext.put(AuthServerHandler.SUPPLIER_INDEX_PROPERTY, endpointManager.getWsName());
 	if (endpointManager.isVerbose()) {
 	    System.out.println("- ping()");
 	}
+	MessageContext messageContext = webServiceContext.getMessageContext();
+	messageContext.put(AuthServerHandler.SUPPLIER_INDEX_PROPERTY, endpointManager.getWsName());
 	if (name == null || name.trim().length() == 0)
 	    name = "friend";
 

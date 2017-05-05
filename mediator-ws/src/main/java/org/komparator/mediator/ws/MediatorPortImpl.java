@@ -45,6 +45,7 @@ public class MediatorPortImpl implements MediatorPortType {
 
     @Override
     public List<ItemView> getItems(String productId) throws InvalidItemId_Exception {
+
 	if (endpointManager.isVerbose()) {
 	    System.out.println("- getItems( " + productId + " )");
 	}
