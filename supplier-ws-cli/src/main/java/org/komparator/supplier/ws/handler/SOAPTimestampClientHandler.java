@@ -1,5 +1,6 @@
 package org.komparator.supplier.ws.handler;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.Set;
@@ -11,6 +12,7 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
+import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
@@ -58,6 +60,14 @@ public class SOAPTimestampClientHandler implements SOAPHandler<SOAPMessageContex
 		Name timestampName = soapEnvelope.createName(RESPONSE_HEADER_DATETIME, HANDLER_FLAG, RESPONSE_NS);
 		Iterator elementIterator = soapHeader.getChildElements(timestampName);
 		if (!elementIterator.hasNext()) {
+		    SOAPMessage message = smc.getMessage();
+
+		    try {
+			message.writeTo(System.out);
+		    } catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		    }
 		    System.err.println("MESSAGE HAS NO TIMESTAMP");
 		    return false;
 		}

@@ -218,9 +218,7 @@ public class CertUtil {
     public static PrivateKey getPrivateKeyFromKeyStoreResource(String keyStoreResourcePath, char[] keyStorePassword,
 	    String keyAlias, char[] keyPassword)
 	    throws FileNotFoundException, KeyStoreException, UnrecoverableKeyException {
-	System.out.println("00");
 	KeyStore keystore = readKeystoreFromResource(keyStoreResourcePath, keyStorePassword);
-	System.out.println("11");
 	return getPrivateKeyFromKeyStore(keyAlias, keyPassword, keystore);
     }
 
@@ -279,12 +277,9 @@ public class CertUtil {
      */
     private static KeyStore readKeystoreFromStream(InputStream keyStoreInputStream, char[] keyStorePassword)
 	    throws KeyStoreException {
-	System.out.println("aa");
 	KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-	System.out.println("bb");
 	try {
 	    keystore.load(keyStoreInputStream, keyStorePassword);
-	    System.out.println("cc");
 	} catch (NoSuchAlgorithmException | CertificateException | IOException e) {
 	    throw new KeyStoreException("Could not load key store", e);
 	} finally {
@@ -307,7 +302,6 @@ public class CertUtil {
     public static KeyStore readKeystoreFromResource(String keyStoreResourcePath, char[] keyStorePassword)
 	    throws KeyStoreException {
 	InputStream is = getResourceAsStream(keyStoreResourcePath);
-	System.out.println("22");
 	return readKeystoreFromStream(is, keyStorePassword);
     }
 

@@ -10,7 +10,7 @@
 			<handler-class>org.komparator.supplier.ws.handler.SOAPTimestampClientHandler</handler-class>
 		</handler>
 		<handler>
-		<handler-class>org.komparator.supplier.ws.handler.AuthClientHandler</handler-class>
+			<handler-class>org.komparator.supplier.ws.handler.AuthClientHandler</handler-class>
 		</handler>
 		<handler>
 			<handler-class>org.komparator.supplier.ws.handler.LoggingHandler</handler-class>

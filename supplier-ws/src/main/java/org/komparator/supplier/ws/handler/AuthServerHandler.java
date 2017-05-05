@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.xml.soap.Name;
+import javax.xml.soap.Node;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPHeader;
@@ -25,6 +26,7 @@ import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
 import org.komparator.security.CertUtil;
+import org.w3c.dom.NodeList;
 
 import pt.ulisboa.tecnico.sdis.ws.cli.CAClient;
 
@@ -79,8 +81,10 @@ public class AuthServerHandler implements SOAPHandler<SOAPMessageContext> {
 		    soapHeader = soapEnvelope.addHeader();
 		Name sigHeaderName = soapEnvelope.createName(RESPONSE_HEADER_AUTH, HANDLER_FLAG, RESPONSE_NS);
 		SOAPHeaderElement sHeaderElement = soapHeader.addHeaderElement(sigHeaderName);
-		sHeaderElement.addTextNode(printHexBinary(soapMessageSigned));
-
+		SOAPElement sHeaderElement2 = sHeaderElement.addTextNode(printHexBinary(soapMessageSigned));
+		if (!sHeaderElement2.getValue().equals(printHexBinary(soapMessageSigned))) {
+		    System.err.println("FAILED TO ADD SIGNATURE");
+		}
 	    } catch (Exception e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -105,6 +109,17 @@ public class AuthServerHandler implements SOAPHandler<SOAPMessageContext> {
 		}
 		SOAPElement sHeaderElement = (SOAPElement) elementIterator.next();
 		String headerValue = sHeaderElement.getValue();
+
+		NodeList nodelist = soapHeader.getChildNodes();
+		int i = 0;
+		while (i < nodelist.getLength()) {
+		    Node node = (Node) nodelist.item(i);
+		    if (node.getLocalName().equals(REQUEST_HEADER_AUTH)) {
+			soapHeader.removeChild(node);
+			break;
+		    }
+		    i++;
+		}
 
 		CAClient caClient = new CAClient("http://sec.sd.rnl.tecnico.ulisboa.pt:8081/ca?WSDL");
 
