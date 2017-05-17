@@ -4,14 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.annotation.Resource;
+import javax.jws.HandlerChain;
 import javax.jws.WebService;
+import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.handler.MessageContext;
 
 import org.komparator.supplier.domain.Product;
 import org.komparator.supplier.domain.Purchase;
 import org.komparator.supplier.domain.QuantityException;
 import org.komparator.supplier.domain.Supplier;
+import org.komparator.supplier.ws.handler.AuthServerHandler;
 
 @WebService(endpointInterface = "org.komparator.supplier.ws.SupplierPortType", wsdlLocation = "supplier.wsdl", name = "SupplierWebService", portName = "SupplierPort", targetNamespace = "http://ws.supplier.komparator.org/", serviceName = "SupplierService")
+@HandlerChain(file = "/supplier_handler-chain.xml")
 public class SupplierPortImpl implements SupplierPortType {
 
     // end point manager
@@ -21,11 +27,19 @@ public class SupplierPortImpl implements SupplierPortType {
 	this.endpointManager = endpointManager;
     }
 
+    @Resource
+    private WebServiceContext webServiceContext;
+
     // Main operations -------------------------------------------------------
 
     @Override
     public ProductView getProduct(String productId) throws BadProductId_Exception {
-	System.out.println("- getProduct( " + productId + " )");
+	MessageContext messageContext = webServiceContext.getMessageContext();
+	messageContext.put(AuthServerHandler.SUPPLIER_INDEX_PROPERTY, endpointManager.getWsName());
+	Supplier supplier = Supplier.getInstance();
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- getProduct( " + productId + " )");
+	}
 	// check product id
 	if (productId == null)
 	    throwBadProductId("Product identifier cannot be null!");
@@ -33,7 +47,6 @@ public class SupplierPortImpl implements SupplierPortType {
 	if (productId.length() == 0)
 	    throwBadProductId("Product identifier cannot be empty or whitespace!");
 	// retrieve product
-	Supplier supplier = Supplier.getInstance();
 	Product p = supplier.getProduct(productId);
 	if (p != null) {
 	    ProductView pv = newProductView(p);
@@ -46,7 +59,12 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public List<ProductView> searchProducts(String descText) throws BadText_Exception {
-	System.out.println("- searchProducts( " + descText + " )");
+	MessageContext messageContext = webServiceContext.getMessageContext();
+	messageContext.put(AuthServerHandler.SUPPLIER_INDEX_PROPERTY, endpointManager.getWsName());
+	Supplier supplier = Supplier.getInstance();
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- searchProducts( " + descText + " )");
+	}
 	// Arguments verification
 	if (descText == null) {
 	    throwBadText("Search string cannot be null!");
@@ -56,7 +74,6 @@ public class SupplierPortImpl implements SupplierPortType {
 	    throwBadText("Search string cannot be empty!");
 	}
 	// core
-	Supplier supplier = Supplier.getInstance();
 	List<ProductView> searchResult = new ArrayList<ProductView>();
 	for (String productId : supplier.getProductsIDs()) {
 	    // Iterate through list of products
@@ -73,8 +90,12 @@ public class SupplierPortImpl implements SupplierPortType {
     @Override
     public String buyProduct(String productId, int quantity)
 	    throws BadProductId_Exception, BadQuantity_Exception, InsufficientQuantity_Exception {
-
-	System.out.println("- createProduct( " + productId + " , " + quantity + " )");
+	MessageContext messageContext = webServiceContext.getMessageContext();
+	messageContext.put(AuthServerHandler.SUPPLIER_INDEX_PROPERTY, endpointManager.getWsName());
+	Supplier supplier = Supplier.getInstance();
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- createProduct( " + productId + " , " + quantity + " )");
+	}
 	// Arguments verification
 	if (productId == null) {
 	    throwBadProductId("Product identifier cannot be null!");
@@ -90,7 +111,6 @@ public class SupplierPortImpl implements SupplierPortType {
 	    throwBadQuantity("Quantity cannot be zero or less!");
 	}
 	// core
-	Supplier supplier = Supplier.getInstance();
 	Product product = supplier.getProduct(productId);
 	if (product == null) {
 	    // Checks if PId exists
@@ -115,6 +135,11 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public String ping(String name) {
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- ping()");
+	}
+	MessageContext messageContext = webServiceContext.getMessageContext();
+	messageContext.put(AuthServerHandler.SUPPLIER_INDEX_PROPERTY, endpointManager.getWsName());
 	if (name == null || name.trim().length() == 0)
 	    name = "friend";
 
@@ -128,18 +153,26 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public void clear() {
-	System.out.println("- clear()");
+	MessageContext messageContext = webServiceContext.getMessageContext();
+	messageContext.put(AuthServerHandler.SUPPLIER_INDEX_PROPERTY, endpointManager.getWsName());
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- clear()");
+	}
 	Supplier.getInstance().reset();
     }
 
     @Override
     public void createProduct(ProductView productToCreate) throws BadProductId_Exception, BadProduct_Exception {
-	if (productToCreate == null) {
-	    System.out.println("- createProduct( " + productToCreate + " )");
-	} else {
-	    System.out.println("- createProduct( " + productToCreate + " , " + productToCreate.getId() + " , "
-		    + productToCreate.getDesc() + " , " + productToCreate.getPrice() + " , "
-		    + productToCreate.getQuantity() + " )");
+	MessageContext messageContext = webServiceContext.getMessageContext();
+	messageContext.put(AuthServerHandler.SUPPLIER_INDEX_PROPERTY, endpointManager.getWsName());
+	if (endpointManager.isVerbose()) {
+	    if (productToCreate == null) {
+		System.out.println("- createProduct( " + productToCreate + " )");
+	    } else {
+		System.out.println("- createProduct( " + productToCreate + " , " + productToCreate.getId() + " , "
+			+ productToCreate.getDesc() + " , " + productToCreate.getPrice() + " , "
+			+ productToCreate.getQuantity() + " )");
+	    }
 	}
 	// check null
 	if (productToCreate == null) {
@@ -173,8 +206,12 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public List<ProductView> listProducts() {
-	System.out.println("- listProducts()");
+	MessageContext messageContext = webServiceContext.getMessageContext();
+	messageContext.put(AuthServerHandler.SUPPLIER_INDEX_PROPERTY, endpointManager.getWsName());
 	Supplier supplier = Supplier.getInstance();
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- listProducts()");
+	}
 	List<ProductView> pvs = new ArrayList<ProductView>();
 	for (String pid : supplier.getProductsIDs()) {
 	    Product p = supplier.getProduct(pid);
@@ -186,8 +223,12 @@ public class SupplierPortImpl implements SupplierPortType {
 
     @Override
     public List<PurchaseView> listPurchases() {
-	System.out.println("- listPurchases()");
+	MessageContext messageContext = webServiceContext.getMessageContext();
+	messageContext.put(AuthServerHandler.SUPPLIER_INDEX_PROPERTY, endpointManager.getWsName());
 	Supplier supplier = Supplier.getInstance();
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- listPurchases()");
+	}
 	List<PurchaseView> pvs = new ArrayList<PurchaseView>();
 	for (String pid : supplier.getPurchasesIDs()) {
 	    Purchase p = supplier.getPurchase(pid);

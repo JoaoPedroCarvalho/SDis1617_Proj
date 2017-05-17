@@ -92,8 +92,11 @@ public class SupplierEndpointManager {
 	    System.out.println("Press enter to shutdown");
 	}
 	try {
+	    setVerbose(false);
 	    System.in.read();
+	    setVerbose(true);
 	} catch (IOException e) {
+	    setVerbose(true);
 	    if (verbose) {
 		System.out.printf("Caught i/o exception when awaiting requests: %s%n", e);
 	    }
