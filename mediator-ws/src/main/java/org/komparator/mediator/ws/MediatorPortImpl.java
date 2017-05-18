@@ -1,5 +1,6 @@
 package org.komparator.mediator.ws;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -379,6 +380,18 @@ public class MediatorPortImpl implements MediatorPortType {
 	    shoppingResultList.add(shoppingResultView);
 	}
 	return shoppingResultList;
+    }
+
+    @Override
+    public void imAlive() {
+	if (endpointManager.getStatus().equals("primary")) {
+	    // is primary
+	} else if (endpointManager.getStatus().equals("secondary")) {
+	    String timeNow = LocalDateTime.now().toString();
+	    Mediator mediator = Mediator.getInstance();
+	    mediator.addAliveLog(timeNow);
+	    System.out.println("PRIMARY IS ALIVE");
+	}
     }
 
     // View helpers -----------------------------------------------------

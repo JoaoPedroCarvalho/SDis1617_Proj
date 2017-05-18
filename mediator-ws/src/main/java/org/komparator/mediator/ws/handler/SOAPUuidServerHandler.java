@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.xml.soap.Name;
+import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
@@ -64,6 +65,19 @@ public class SOAPUuidServerHandler implements SOAPHandler<SOAPMessageContext> {
 	    // inbound message
 	    try {
 		SOAPEnvelope soapEnvelope = smc.getMessage().getSOAPPart().getEnvelope();
+
+		SOAPBody soapBody = soapEnvelope.getBody();
+		// check Body
+		if (soapBody != null) {
+		    Iterator sBodyElements = soapBody.getChildElements();
+		    while (sBodyElements.hasNext()) {
+			SOAPElement bodyElement = (SOAPElement) sBodyElements.next();
+			if (bodyElement.getElementName().getLocalName().equals("imAlive")) {
+			    return true;
+			}
+		    }
+		}
+
 		SOAPHeader soapHeader = soapEnvelope.getHeader();
 		if (soapHeader == null) {
 		    System.err.println("MESSAGE HAS NO HEADER");

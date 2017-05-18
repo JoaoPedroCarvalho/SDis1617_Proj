@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
+import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
@@ -50,6 +51,19 @@ public class SOAPTimestampServerHandler implements SOAPHandler<SOAPMessageContex
 	    // inbound message
 	    try {
 		SOAPEnvelope soapEnvelope = smc.getMessage().getSOAPPart().getEnvelope();
+
+		SOAPBody soapBody = soapEnvelope.getBody();
+		// check Body
+		if (soapBody != null) {
+		    Iterator sBodyElements = soapBody.getChildElements();
+		    while (sBodyElements.hasNext()) {
+			SOAPElement bodyElement = (SOAPElement) sBodyElements.next();
+			if (bodyElement.getElementName().getLocalName().equals("imAlive")) {
+			    return true;
+			}
+		    }
+		}
+
 		SOAPHeader soapHeader = soapEnvelope.getHeader();
 		if (soapHeader == null) {
 		    System.err.println("Header not found.");

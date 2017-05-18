@@ -1,5 +1,7 @@
 package org.komparator.mediator.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -22,6 +24,8 @@ public class Mediator {
      * Map of shoppingResults. Also uses concurrent hash table implementation.
      */
     private Map<String, ShoppingResult> shoppingResults = new ConcurrentHashMap<>();
+
+    private List<String> aliveLog = new ArrayList<String>();
 
     // Singleton -------------------------------------------------------------
 
@@ -114,5 +118,9 @@ public class Mediator {
 
     public void addShoppingResult(ShoppingResult shoppingResult) {
 	shoppingResults.put(shoppingResult.getId(), shoppingResult);
+    }
+
+    public void addAliveLog(String timeNow) {
+	aliveLog.add(timeNow);
     }
 }

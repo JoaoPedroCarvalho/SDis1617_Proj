@@ -42,6 +42,7 @@ public class MediatorEndpointManager {
 
     /** output option **/
     private boolean verbose = true;
+    private String status = null;
 
     public boolean isVerbose() {
 	return verbose;
@@ -68,6 +69,11 @@ public class MediatorEndpointManager {
     /* end point management */
 
     public void start() throws Exception {
+	if (this.uddiURL == null) {
+	    this.status = "secondary";
+	} else {
+	    this.status = "primary";
+	}
 	try {
 	    endpoint = Endpoint.create(this.portImpl);
 	    if (verbose) {
@@ -153,6 +159,10 @@ public class MediatorEndpointManager {
 		System.out.printf("Caught exception when unbinding: %s%n", e);
 	    }
 	}
+    }
+
+    public Object getStatus() {
+	return this.status;
     }
 
 }
