@@ -19,10 +19,16 @@
 
         <mainclass>org.komparator.mediator.ws.MediatorApp</mainclass>
 
+		<group.id>T63</group.id>
+		<ws.i>1</ws.i>
+		<ws.host>localhost</ws.host>
+		<ws.port>807${ws.i}</ws.port>
+		<ws.url>http://${ws.host}:${ws.port}/mediator-ws/endpoint</ws.url>
+		<ws.name>${group.id}_Mediator</ws.name>
+		<supplier.ws.name>${group.id}_Supplier</supplier.ws.name>
+
         <uddi.url>http://localhost:9090</uddi.url>
 <!--         <uddi.url>http://t63:gm8AvvUD@uddi.sd.rnl.tecnico.ulisboa.pt:9090/</uddi.url> -->
-        <ws.name>T63_Mediator</ws.name>
-        <ws.url>http://localhost:8080/mediator-ws/endpoint</ws.url>
     </properties>
 
     <dependencies>
@@ -42,6 +48,12 @@
 		<dependency>
 			<groupId>org.komparator.T63</groupId>
 			<artifactId>supplier-ws-cli</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+        <!-- Mediator Cli -->
+		<dependency>
+			<groupId>org.komparator.T63</groupId>
+			<artifactId>mediator-ws-cli</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
         <!-- Credit Card -->
@@ -108,6 +120,7 @@
                         <argument>${uddi.url}</argument>
                         <argument>${ws.name}</argument>
                         <argument>${ws.url}</argument>
+                        <argument>${ws.i}</argument>
                     </arguments>
                 </configuration>
             </plugin>
