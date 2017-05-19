@@ -18,8 +18,6 @@ import org.komparator.supplier.ws.SupplierPortType;
 import org.komparator.supplier.ws.SupplierService;
 import org.komparator.supplier.ws.handler.AuthClientHandler;
 
-import com.sun.xml.ws.client.ClientTransportException;
-
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
 
 /**
@@ -119,12 +117,7 @@ public class SupplierClient implements SupplierPortType {
 	BindingProvider bindingProvider = (BindingProvider) port;
 	Map<String, Object> requestContext = bindingProvider.getRequestContext();
 	requestContext.put(AuthClientHandler.UDDI_URL_PROPERTY, this.uddiURL);
-	try {
-	    return port.getProduct(productId);
-	} catch (ClientTransportException e) {
-	    return getProduct(productId);
-	}
-
+	return port.getProduct(productId);
     }
 
     @Override
@@ -132,11 +125,7 @@ public class SupplierClient implements SupplierPortType {
 	BindingProvider bindingProvider = (BindingProvider) port;
 	Map<String, Object> requestContext = bindingProvider.getRequestContext();
 	requestContext.put(AuthClientHandler.UDDI_URL_PROPERTY, this.uddiURL);
-	try {
-	    return port.searchProducts(descText);
-	} catch (ClientTransportException e) {
-	    return searchProducts(descText);
-	}
+	return port.searchProducts(descText);
     }
 
     @Override
@@ -145,11 +134,7 @@ public class SupplierClient implements SupplierPortType {
 	BindingProvider bindingProvider = (BindingProvider) port;
 	Map<String, Object> requestContext = bindingProvider.getRequestContext();
 	requestContext.put(AuthClientHandler.UDDI_URL_PROPERTY, this.uddiURL);
-	try {
-	    return port.buyProduct(productId, quantity);
-	} catch (ClientTransportException e) {
-	    return buyProduct(productId, quantity);
-	}
+	return port.buyProduct(productId, quantity);
     }
 
     @Override
@@ -157,11 +142,7 @@ public class SupplierClient implements SupplierPortType {
 	BindingProvider bindingProvider = (BindingProvider) port;
 	Map<String, Object> requestContext = bindingProvider.getRequestContext();
 	requestContext.put(AuthClientHandler.UDDI_URL_PROPERTY, this.uddiURL);
-	try {
-	    return port.ping(name);
-	} catch (ClientTransportException e) {
-	    return ping(name);
-	}
+	return port.ping(name);
     }
 
     @Override
@@ -169,11 +150,7 @@ public class SupplierClient implements SupplierPortType {
 	BindingProvider bindingProvider = (BindingProvider) port;
 	Map<String, Object> requestContext = bindingProvider.getRequestContext();
 	requestContext.put(AuthClientHandler.UDDI_URL_PROPERTY, this.uddiURL);
-	try {
-	    port.clear();
-	} catch (ClientTransportException e) {
-	    clear();
-	}
+	port.clear();
     }
 
     @Override
@@ -181,11 +158,7 @@ public class SupplierClient implements SupplierPortType {
 	BindingProvider bindingProvider = (BindingProvider) port;
 	Map<String, Object> requestContext = bindingProvider.getRequestContext();
 	requestContext.put(AuthClientHandler.UDDI_URL_PROPERTY, this.uddiURL);
-	try {
-	    port.createProduct(productToCreate);
-	} catch (ClientTransportException e) {
-	    createProduct(productToCreate);
-	}
+	port.createProduct(productToCreate);
     }
 
     @Override
@@ -193,11 +166,7 @@ public class SupplierClient implements SupplierPortType {
 	BindingProvider bindingProvider = (BindingProvider) port;
 	Map<String, Object> requestContext = bindingProvider.getRequestContext();
 	requestContext.put(AuthClientHandler.UDDI_URL_PROPERTY, this.uddiURL);
-	try {
-	    return port.listProducts();
-	} catch (ClientTransportException e) {
-	    return listProducts();
-	}
+	return port.listProducts();
     }
 
     @Override
@@ -205,11 +174,7 @@ public class SupplierClient implements SupplierPortType {
 	BindingProvider bindingProvider = (BindingProvider) port;
 	Map<String, Object> requestContext = bindingProvider.getRequestContext();
 	requestContext.put(AuthClientHandler.UDDI_URL_PROPERTY, this.uddiURL);
-	try {
-	    return port.listPurchases();
-	} catch (ClientTransportException e) {
-	    return listPurchases();
-	}
+	return port.listPurchases();
     }
 
 }
