@@ -123,6 +123,7 @@ public class MediatorClient implements MediatorPortType {
 	    port.clear();
 	} catch (ClientTransportException e) {
 	    updateUddi();
+	    clear();
 	}
     }
 
@@ -132,8 +133,8 @@ public class MediatorClient implements MediatorPortType {
 	    return port.ping(arg0);
 	} catch (ClientTransportException e) {
 	    updateUddi();
+	    return ping(arg0);
 	}
-	return null;
     }
 
     @Override
@@ -142,8 +143,8 @@ public class MediatorClient implements MediatorPortType {
 	    return port.searchItems(descText);
 	} catch (ClientTransportException e) {
 	    updateUddi();
+	    return searchItems(descText);
 	}
-	return null;
     }
 
     @Override
@@ -152,8 +153,8 @@ public class MediatorClient implements MediatorPortType {
 	    return port.listCarts();
 	} catch (ClientTransportException e) {
 	    updateUddi();
+	    return listCarts();
 	}
-	return null;
     }
 
     @Override
@@ -162,8 +163,8 @@ public class MediatorClient implements MediatorPortType {
 	    return port.getItems(productId);
 	} catch (ClientTransportException e) {
 	    updateUddi();
+	    return getItems(productId);
 	}
-	return null;
     }
 
     @Override
@@ -173,8 +174,8 @@ public class MediatorClient implements MediatorPortType {
 	    return port.buyCart(cartId, creditCardNr);
 	} catch (ClientTransportException e) {
 	    updateUddi();
+	    return buyCart(cartId, creditCardNr);
 	}
-	return null;
     }
 
     @Override
@@ -184,6 +185,7 @@ public class MediatorClient implements MediatorPortType {
 	    port.addToCart(cartId, itemId, itemQty);
 	} catch (ClientTransportException e) {
 	    updateUddi();
+	    addToCart(cartId, itemId, itemQty);
 	}
     }
 
@@ -193,8 +195,8 @@ public class MediatorClient implements MediatorPortType {
 	    return port.shopHistory();
 	} catch (ClientTransportException e) {
 	    updateUddi();
+	    return shopHistory();
 	}
-	return null;
     }
 
     @Override
