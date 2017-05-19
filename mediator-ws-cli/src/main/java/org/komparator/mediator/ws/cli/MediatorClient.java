@@ -216,6 +216,15 @@ public class MediatorClient implements MediatorPortType {
 	try {
 	    uddiLookup();
 	    createStub();
+	    try {
+		String test = port.ping("rebind_test");
+		if (test != null) {
+		    System.out.println("Rebind succesfull");
+		    return;
+		}
+	    } catch (ClientTransportException e) {
+		updateUddi();
+	    }
 	} catch (MediatorClientException e) {
 	    updateUddi();
 	}
