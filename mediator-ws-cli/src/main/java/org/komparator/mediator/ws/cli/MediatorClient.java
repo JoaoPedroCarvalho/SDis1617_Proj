@@ -201,33 +201,17 @@ public class MediatorClient implements MediatorPortType {
 
     @Override
     public void imAlive() {
-	try {
-	    port.imAlive();
-	} catch (ClientTransportException e) {
-	    updateUddi();
-	    imAlive();
-	}
+	port.imAlive();
     }
 
     @Override
     public void updateShopHistory(ShoppingResultView shoppingResult) {
-	try {
-	    port.updateShopHistory(shoppingResult);
-	} catch (ClientTransportException e) {
-	    updateUddi();
-	    updateShopHistory(shoppingResult);
-	}
 	port.updateShopHistory(shoppingResult);
     }
 
     @Override
     public void updateCart(CartView cart) {
-	try {
-	    port.updateCart(cart);
-	} catch (ClientTransportException e) {
-	    updateUddi();
-	    updateCart(cart);
-	}
+	port.updateCart(cart);
     }
 
     private void updateUddi() {
