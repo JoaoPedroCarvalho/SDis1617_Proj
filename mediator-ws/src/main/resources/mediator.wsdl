@@ -38,6 +38,10 @@ wsdl:service, wsdl:portType, wsdl:types and wsdl:binding below
             <xs:element name="addToCart" type="tns:addToCart"/>
 
             <xs:element name="addToCartResponse" type="tns:addToCartResponse"/>
+			
+			<xs:element name="updateShopHistory" type="tns:updateShopHistory"/>
+			
+			<xs:element name="updateCart" type="tns:updateCart"/>
 
             <xs:element name="buyCart" type="tns:buyCart"/>
 
@@ -58,6 +62,8 @@ wsdl:service, wsdl:portType, wsdl:types and wsdl:binding below
             <xs:element name="ping" type="tns:ping"/>
 
             <xs:element name="pingResponse" type="tns:pingResponse"/>
+			
+			<xs:element name="imAlive" type="tns:imAlive"/>
 
             <xs:element name="searchItems" type="tns:searchItems"/>
 
@@ -135,6 +141,10 @@ wsdl:service, wsdl:portType, wsdl:types and wsdl:binding below
                     <xs:element name="return" type="xs:string" minOccurs="0"/>
                 </xs:sequence>
             </xs:complexType>
+			
+			<xs:complexType name="imAlive">
+                <xs:sequence/>
+            </xs:complexType>
 
             <xs:complexType name="buyCart">
                 <xs:sequence>
@@ -205,6 +215,18 @@ wsdl:service, wsdl:portType, wsdl:types and wsdl:binding below
 
             <xs:complexType name="addToCartResponse">
                 <xs:sequence/>
+            </xs:complexType>
+			
+			<xs:complexType name="updateShopHistory">
+                <xs:sequence>
+                    <xs:element name="shoppingResult" type="tns:shoppingResultView" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+			
+			<xs:complexType name="updateCart">
+                <xs:sequence>
+                    <xs:element name="cart" type="tns:cartView" minOccurs="0"/>
+                </xs:sequence>
             </xs:complexType>
 
             <xs:complexType name="InvalidQuantity">
@@ -299,6 +321,12 @@ wsdl:service, wsdl:portType, wsdl:types and wsdl:binding below
     <message name="addToCartResponse">
         <part name="parameters" element="tns:addToCartResponse"/>
     </message>
+    <message name="updateShopHistory">
+        <part name="parameters" element="tns:updateShopHistory"/>
+    </message>
+    <message name="updateCart">
+        <part name="parameters" element="tns:updateCart"/>
+    </message>
     <message name="InvalidQuantity">
         <part name="fault" element="tns:InvalidQuantity"/>
     </message>
@@ -310,6 +338,9 @@ wsdl:service, wsdl:portType, wsdl:types and wsdl:binding below
     </message>
     <message name="pingResponse">
         <part name="parameters" element="tns:pingResponse"/>
+    </message>
+	<message name="imAlive">
+        <part name="parameters" element="tns:imAlive"/>
     </message>
     <message name="shopHistory">
         <part name="parameters" element="tns:shopHistory"/>
@@ -353,9 +384,18 @@ wsdl:service, wsdl:portType, wsdl:types and wsdl:binding below
             <fault message="tns:InvalidQuantity" name="InvalidQuantity" wsam:Action="http://ws.mediator.komparator.org/Mediator/addToCart/Fault/InvalidQuantity"/>
             <fault message="tns:NotEnoughItems" name="NotEnoughItems" wsam:Action="http://ws.mediator.komparator.org/Mediator/addToCart/Fault/NotEnoughItems"/>
         </operation>
+        <operation name="updateShopHistory">
+            <input wsam:Action="http://ws.mediator.komparator.org/Mediator/updateShopHistoryRequest" message="tns:updateShopHistory"/>
+        </operation>
+        <operation name="updateCart">
+            <input wsam:Action="http://ws.mediator.komparator.org/Mediator/updateCartRequest" message="tns:updateCart"/>
+        </operation>
         <operation name="ping">
             <input wsam:Action="http://ws.mediator.komparator.org/Mediator/pingRequest" message="tns:ping"/>
             <output wsam:Action="http://ws.mediator.komparator.org/Mediator/pingResponse" message="tns:pingResponse"/>
+        </operation>
+		<operation name="imAlive">
+            <input wsam:Action="http://ws.mediator.komparator.org/Mediator/pingRequest" message="tns:imAlive"/>
         </operation>
         <operation name="shopHistory">
             <input wsam:Action="http://ws.mediator.komparator.org/Mediator/shopHistoryRequest" message="tns:shopHistory"/>
@@ -447,6 +487,18 @@ wsdl:service, wsdl:portType, wsdl:types and wsdl:binding below
                 <soap:fault name="NotEnoughItems" use="literal"/>
             </fault>
         </operation>
+        <operation name="updateShopHistory">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+        <operation name="updateCart">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
         <operation name="ping">
             <soap:operation soapAction=""/>
             <input>
@@ -455,6 +507,12 @@ wsdl:service, wsdl:portType, wsdl:types and wsdl:binding below
             <output>
                 <soap:body use="literal"/>
             </output>
+        </operation>
+		<operation name="imAlive">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
         </operation>
         <operation name="shopHistory">
             <soap:operation soapAction=""/>

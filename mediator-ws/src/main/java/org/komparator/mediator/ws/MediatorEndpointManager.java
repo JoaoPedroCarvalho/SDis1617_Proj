@@ -1,6 +1,7 @@
 package org.komparator.mediator.ws;
 
 import java.io.IOException;
+import java.util.Timer;
 
 import javax.xml.ws.Endpoint;
 
@@ -42,6 +43,8 @@ public class MediatorEndpointManager {
 
     /** output option **/
     private boolean verbose = true;
+    private String status = null;
+    private Timer timer;
 
     public boolean isVerbose() {
 	return verbose;
@@ -68,6 +71,11 @@ public class MediatorEndpointManager {
     /* end point management */
 
     public void start() throws Exception {
+	if (this.uddiURL == null) {
+	    this.status = "secondary";
+	} else {
+	    this.status = "primary";
+	}
 	try {
 	    endpoint = Endpoint.create(this.portImpl);
 	    if (verbose) {
@@ -153,6 +161,26 @@ public class MediatorEndpointManager {
 		System.out.printf("Caught exception when unbinding: %s%n", e);
 	    }
 	}
+    }
+
+    public Object getStatus() {
+	return this.status;
+    }
+
+    public void setStatus(String status) {
+	this.status = status;
+    }
+
+    public void setTimer(Timer timer) {
+	this.timer = timer;
+    }
+
+    public Timer getTimer() {
+	return this.timer;
+    }
+
+    public void setUddiNaming(UDDINaming uddiNaming2) {
+	this.uddiNaming = uddiNaming2;
     }
 
 }

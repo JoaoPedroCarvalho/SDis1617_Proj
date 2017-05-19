@@ -21,6 +21,14 @@ public class ShoppingResult {
 	this.totalPrice = 0;
     }
 
+    public ShoppingResult(ShoppingResultView shoppingResult) {
+	this.shoppingResultId = shoppingResult.getId();
+	this.result = shoppingResult.getResult();
+	this.purchasedItems = shoppingResult.getPurchasedItems();
+	this.droppedItems = shoppingResult.getDroppedItems();
+	this.totalPrice = shoppingResult.getTotalPrice();
+    }
+
     public void updateResult() {
 	if (purchasedItems.isEmpty()) {
 	    this.result = Result.EMPTY;

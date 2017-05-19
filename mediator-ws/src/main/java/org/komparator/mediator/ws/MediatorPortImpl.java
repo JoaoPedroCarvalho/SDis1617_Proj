@@ -1,5 +1,6 @@
 package org.komparator.mediator.ws;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -14,6 +15,7 @@ import org.komparator.mediator.domain.Cart;
 import org.komparator.mediator.domain.Item;
 import org.komparator.mediator.domain.Mediator;
 import org.komparator.mediator.domain.ShoppingResult;
+import org.komparator.mediator.ws.cli.MediatorClient;
 import org.komparator.supplier.ws.BadProductId_Exception;
 import org.komparator.supplier.ws.BadQuantity_Exception;
 import org.komparator.supplier.ws.BadText_Exception;
@@ -40,6 +42,7 @@ public class MediatorPortImpl implements MediatorPortType {
 
     @Resource
     private WebServiceContext webServiceContext;
+    private String secMediatorUrl = "http://localhost:8072/mediator-ws/endpoint";
 
     // Main operations -------------------------------------------------------
 
@@ -214,6 +217,14 @@ public class MediatorPortImpl implements MediatorPortType {
 	shoppingResult.updateResult();
 	shoppingResult.setShoppingResultId(mediator.generateShoppingResultId());
 	mediator.addShoppingResult(shoppingResult);
+	try {
+	    if (endpointManager.getStatus().equals("primary")) {
+		MediatorClient tempClient = new MediatorClient(secMediatorUrl);
+		tempClient.updateShopHistory(shoppingResult.toView());
+	    }
+	} catch (Exception e) {
+	    System.err.println("ERROR UPDATING shopping result");
+	}
 	return shoppingResult.toView();
     }
 
@@ -303,7 +314,14 @@ public class MediatorPortImpl implements MediatorPortType {
 	} catch (SupplierClientException e) {
 	    // continue;
 	}
-
+	try {
+	    if (endpointManager.getStatus().equals("primary")) {
+		MediatorClient tempClient = new MediatorClient(secMediatorUrl);
+		tempClient.updateCart(cart.toView());
+	    }
+	} catch (Exception e) {
+	    System.err.println("ERROR UPDATING CART");
+	}
     }
     // Auxiliary operations --------------------------------------------------
 
@@ -381,6 +399,39 @@ public class MediatorPortImpl implements MediatorPortType {
 	return shoppingResultList;
     }
 
+    @Override
+    public void imAlive() {
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- imAlive()");
+	}
+	if (endpointManager.getStatus().equals("primary")) {
+	    // is primary
+	} else if (endpointManager.getStatus().equals("secondary")) {
+	    LocalDateTime timeNow = LocalDateTime.now();
+	    Mediator mediator = Mediator.getInstance();
+	    mediator.setLastBreath(timeNow);
+	    System.out.println("PRIMARY IS ALIVE");
+	}
+    }
+
+    @Override
+    public void updateShopHistory(ShoppingResultView shoppingResult) {
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- updateShopHistory( " + shoppingResult + " )");
+	}
+	Mediator mediator = Mediator.getInstance();
+	mediator.refreshShopHistory(shoppingResult);
+    }
+
+    @Override
+    public void updateCart(CartView cart) {
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- updateCart( " + cart + " )");
+	}
+	Mediator mediator = Mediator.getInstance();
+	mediator.refreshCart(cart);
+    }
+
     // View helpers -----------------------------------------------------
 
     private ShoppingResultView newShoppingResultView(ShoppingResult shoppingResult) {
@@ -452,5 +503,4 @@ public class MediatorPortImpl implements MediatorPortType {
 	System.err.println(message);
 	throw new NotEnoughItems_Exception(message, faultInfo);
     }
-
 }
