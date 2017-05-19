@@ -38,6 +38,14 @@ wsdl:service, wsdl:portType, wsdl:types and wsdl:binding below
             <xs:element name="addToCart" type="tns:addToCart"/>
 
             <xs:element name="addToCartResponse" type="tns:addToCartResponse"/>
+			
+			<xs:element name="updateShopHistory" type="tns:updateShopHistory"/>
+
+            <xs:element name="updateShopHistoryResponse" type="tns:updateShopHistoryResponse"/>
+			
+			<xs:element name="updateCart" type="tns:updateCart"/>
+
+            <xs:element name="updateCartResponse" type="tns:updateCartResponse"/>
 
             <xs:element name="buyCart" type="tns:buyCart"/>
 
@@ -218,6 +226,26 @@ wsdl:service, wsdl:portType, wsdl:types and wsdl:binding below
             <xs:complexType name="addToCartResponse">
                 <xs:sequence/>
             </xs:complexType>
+			
+			<xs:complexType name="updateShopHistory">
+                <xs:sequence>
+                    <xs:element name="shoppingResult" type="tns:shoppingResultView" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="updateShopHistoryResponse">
+                <xs:sequence/>
+            </xs:complexType>
+			
+			<xs:complexType name="updateCart">
+                <xs:sequence>
+                    <xs:element name="cart" type="tns:cartView" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+
+            <xs:complexType name="updateCartResponse">
+                <xs:sequence/>
+            </xs:complexType>
 
             <xs:complexType name="InvalidQuantity">
                 <xs:sequence>
@@ -311,6 +339,18 @@ wsdl:service, wsdl:portType, wsdl:types and wsdl:binding below
     <message name="addToCartResponse">
         <part name="parameters" element="tns:addToCartResponse"/>
     </message>
+    <message name="updateShopHistory">
+        <part name="parameters" element="tns:updateShopHistory"/>
+    </message>
+    <message name="updateShopHistoryResponse">
+        <part name="parameters" element="tns:updateShopHistoryResponse"/>
+    </message>
+    <message name="updateCart">
+        <part name="parameters" element="tns:updateCart"/>
+    </message>
+    <message name="updateCartResponse">
+        <part name="parameters" element="tns:updateCartResponse"/>
+    </message>
     <message name="InvalidQuantity">
         <part name="fault" element="tns:InvalidQuantity"/>
     </message>
@@ -370,6 +410,14 @@ wsdl:service, wsdl:portType, wsdl:types and wsdl:binding below
             <fault message="tns:InvalidItemId" name="InvalidItemId" wsam:Action="http://ws.mediator.komparator.org/Mediator/addToCart/Fault/InvalidItemId"/>
             <fault message="tns:InvalidQuantity" name="InvalidQuantity" wsam:Action="http://ws.mediator.komparator.org/Mediator/addToCart/Fault/InvalidQuantity"/>
             <fault message="tns:NotEnoughItems" name="NotEnoughItems" wsam:Action="http://ws.mediator.komparator.org/Mediator/addToCart/Fault/NotEnoughItems"/>
+        </operation>
+        <operation name="updateShopHistory">
+            <input wsam:Action="http://ws.mediator.komparator.org/Mediator/updateShopHistoryRequest" message="tns:updateShopHistory"/>
+            <output wsam:Action="http://ws.mediator.komparator.org/Mediator/updateShopHistoryResponse" message="tns:updateShopHistoryResponse"/>
+        </operation>
+        <operation name="updateCart">
+            <input wsam:Action="http://ws.mediator.komparator.org/Mediator/updateCartRequest" message="tns:updateCart"/>
+            <output wsam:Action="http://ws.mediator.komparator.org/Mediator/updateCartResponse" message="tns:updateCartResponse"/>
         </operation>
         <operation name="ping">
             <input wsam:Action="http://ws.mediator.komparator.org/Mediator/pingRequest" message="tns:ping"/>
@@ -468,6 +516,24 @@ wsdl:service, wsdl:portType, wsdl:types and wsdl:binding below
             <fault name="NotEnoughItems">
                 <soap:fault name="NotEnoughItems" use="literal"/>
             </fault>
+        </operation>
+        <operation name="updateShopHistory">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="updateCart">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
         </operation>
         <operation name="ping">
             <soap:operation soapAction=""/>

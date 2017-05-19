@@ -1,11 +1,13 @@
 package org.komparator.mediator.domain;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.komparator.mediator.ws.CartView;
+import org.komparator.mediator.ws.ShoppingResultView;
 
 import pt.ulisboa.tecnico.sdis.ws.cli.CreditCardClient;
 import pt.ulisboa.tecnico.sdis.ws.cli.CreditCardClientException;
@@ -25,7 +27,7 @@ public class Mediator {
      */
     private Map<String, ShoppingResult> shoppingResults = new ConcurrentHashMap<>();
 
-    private List<String> aliveLog = new ArrayList<String>();
+    private LocalDateTime lastBreath = null;
 
     // Singleton -------------------------------------------------------------
 
@@ -120,7 +122,35 @@ public class Mediator {
 	shoppingResults.put(shoppingResult.getId(), shoppingResult);
     }
 
-    public void addAliveLog(String timeNow) {
-	aliveLog.add(timeNow);
+    public void setLastBreath(LocalDateTime timeNow) {
+	this.lastBreath = timeNow;
+    }
+
+    public LocalDateTime getLastBreath() {
+	return lastBreath;
+    }
+
+    public void refreshCart(CartView cart) {
+	Set<String> cartList = getCartsIds();
+	for (String cartId : cartList) {
+	    if (cartId.equals(cart.getCartId())) {
+		carts.remove(cartId);
+		carts.put(cart.getCartId(), new Cart(cart));
+		return;
+	    }
+	}
+	carts.put(cart.getCartId(), new Cart(cart));
+    }
+
+    public void refreshShopHistory(ShoppingResultView shoppingResult) {
+	Set<String> shoppingResultList = getShoppingResultsIds();
+	for (String sRId : shoppingResultList) {
+	    if (sRId.equals(shoppingResult.getId())) {
+		shoppingResults.remove(sRId);
+		shoppingResults.put(shoppingResult.getId(), new ShoppingResult(shoppingResult));
+		return;
+	    }
+	}
+	shoppingResults.put(shoppingResult.getId(), new ShoppingResult(shoppingResult));
     }
 }

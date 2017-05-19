@@ -17,6 +17,11 @@ public class Cart {
 	this.cartItems = new ArrayList<CartItemView>();
     }
 
+    public Cart(CartView cart) {
+	this.cartId = cart.getCartId();
+	this.cartItems = cart.getItems();
+    }
+
     public void addItemToCart(ItemIdView itemId, String desc, int price, String pid, int quantity) {
 	for (CartItemView cartItemView : cartItems) {
 	    if (cartItemView.getItem().getItemId().getProductId().equals(itemId.getProductId())

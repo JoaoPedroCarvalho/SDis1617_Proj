@@ -162,4 +162,14 @@ public class MediatorClient implements MediatorPortType {
 	port.imAlive();
     }
 
+    @Override
+    public void updateShopHistory(ShoppingResultView shoppingResult) {
+	port.updateShopHistory(shoppingResult);
+    }
+
+    @Override
+    public void updateCart(CartView cart) {
+	port.updateCart(cart);
+    }
+
 }
