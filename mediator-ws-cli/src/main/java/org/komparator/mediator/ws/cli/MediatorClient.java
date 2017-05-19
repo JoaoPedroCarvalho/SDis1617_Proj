@@ -122,13 +122,8 @@ public class MediatorClient implements MediatorPortType {
 	try {
 	    port.clear();
 	} catch (ClientTransportException e) {
-	    try {
-		uddiLookup();
-		createStub();
-		clear();
-	    } catch (MediatorClientException e1) {
-		// ignore
-	    }
+	    updateUddi();
+	    clear();
 	}
     }
 
@@ -137,6 +132,7 @@ public class MediatorClient implements MediatorPortType {
 	try {
 	    return port.ping(arg0);
 	} catch (ClientTransportException e) {
+	    updateUddi();
 	    return ping(arg0);
 	}
     }
@@ -146,6 +142,7 @@ public class MediatorClient implements MediatorPortType {
 	try {
 	    return port.searchItems(descText);
 	} catch (ClientTransportException e) {
+	    updateUddi();
 	    return searchItems(descText);
 	}
     }
@@ -155,6 +152,7 @@ public class MediatorClient implements MediatorPortType {
 	try {
 	    return port.listCarts();
 	} catch (ClientTransportException e) {
+	    updateUddi();
 	    return listCarts();
 	}
     }
@@ -164,6 +162,7 @@ public class MediatorClient implements MediatorPortType {
 	try {
 	    return port.getItems(productId);
 	} catch (ClientTransportException e) {
+	    updateUddi();
 	    return getItems(productId);
 	}
     }
@@ -174,6 +173,7 @@ public class MediatorClient implements MediatorPortType {
 	try {
 	    return port.buyCart(cartId, creditCardNr);
 	} catch (ClientTransportException e) {
+	    updateUddi();
 	    return buyCart(cartId, creditCardNr);
 	}
     }
@@ -184,6 +184,7 @@ public class MediatorClient implements MediatorPortType {
 	try {
 	    port.addToCart(cartId, itemId, itemQty);
 	} catch (ClientTransportException e) {
+	    updateUddi();
 	    addToCart(cartId, itemId, itemQty);
 	}
     }
@@ -193,6 +194,7 @@ public class MediatorClient implements MediatorPortType {
 	try {
 	    return port.shopHistory();
 	} catch (ClientTransportException e) {
+	    updateUddi();
 	    return shopHistory();
 	}
     }
@@ -202,6 +204,7 @@ public class MediatorClient implements MediatorPortType {
 	try {
 	    port.imAlive();
 	} catch (ClientTransportException e) {
+	    updateUddi();
 	    imAlive();
 	}
     }
@@ -211,6 +214,7 @@ public class MediatorClient implements MediatorPortType {
 	try {
 	    port.updateShopHistory(shoppingResult);
 	} catch (ClientTransportException e) {
+	    updateUddi();
 	    updateShopHistory(shoppingResult);
 	}
 	port.updateShopHistory(shoppingResult);
@@ -221,8 +225,17 @@ public class MediatorClient implements MediatorPortType {
 	try {
 	    port.updateCart(cart);
 	} catch (ClientTransportException e) {
+	    updateUddi();
 	    updateCart(cart);
 	}
     }
 
+    private void updateUddi() {
+	try {
+	    uddiLookup();
+	    createStub();
+	} catch (MediatorClientException e) {
+	    updateUddi();
+	}
+    }
 }
