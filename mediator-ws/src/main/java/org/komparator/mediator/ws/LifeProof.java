@@ -5,6 +5,9 @@ import java.util.TimerTask;
 
 import org.komparator.mediator.domain.Mediator;
 import org.komparator.mediator.ws.cli.MediatorClient;
+import org.komparator.mediator.ws.cli.MediatorClientException;
+
+import com.sun.xml.ws.client.ClientTransportException;
 
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINamingException;
@@ -39,7 +42,7 @@ public class LifeProof extends TimerTask {
 	    try {
 		MediatorClient tempClient = new MediatorClient(secMediatorUrl);
 		tempClient.imAlive();
-	    } catch (Exception e) {
+	    } catch (ClientTransportException | MediatorClientException e) {
 		System.err.println("FAILED TO CREATE MEDCLI");
 	    }
 	} else if (this.status.equals("secondary")) {

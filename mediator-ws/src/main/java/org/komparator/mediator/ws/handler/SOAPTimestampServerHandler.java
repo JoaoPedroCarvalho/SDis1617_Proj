@@ -61,6 +61,12 @@ public class SOAPTimestampServerHandler implements SOAPHandler<SOAPMessageContex
 			if (bodyElement.getElementName().getLocalName().equals("imAlive")) {
 			    return true;
 			}
+			if (bodyElement.getElementName().getLocalName().equals("updateCart")) {
+			    return true;
+			}
+			if (bodyElement.getElementName().getLocalName().equals("updateShoppingResult")) {
+			    return true;
+			}
 		    }
 		}
 

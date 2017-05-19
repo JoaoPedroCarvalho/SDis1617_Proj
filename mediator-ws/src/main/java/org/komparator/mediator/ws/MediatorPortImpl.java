@@ -401,6 +401,9 @@ public class MediatorPortImpl implements MediatorPortType {
 
     @Override
     public void imAlive() {
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- imAlive()");
+	}
 	if (endpointManager.getStatus().equals("primary")) {
 	    // is primary
 	} else if (endpointManager.getStatus().equals("secondary")) {
@@ -413,12 +416,18 @@ public class MediatorPortImpl implements MediatorPortType {
 
     @Override
     public void updateShopHistory(ShoppingResultView shoppingResult) {
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- updateShopHistory( " + shoppingResult + " )");
+	}
 	Mediator mediator = Mediator.getInstance();
 	mediator.refreshShopHistory(shoppingResult);
     }
 
     @Override
     public void updateCart(CartView cart) {
+	if (endpointManager.isVerbose()) {
+	    System.out.println("- updateCart( " + cart + " )");
+	}
 	Mediator mediator = Mediator.getInstance();
 	mediator.refreshCart(cart);
     }

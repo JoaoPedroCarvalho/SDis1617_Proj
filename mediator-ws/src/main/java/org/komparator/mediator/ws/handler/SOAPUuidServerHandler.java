@@ -75,6 +75,12 @@ public class SOAPUuidServerHandler implements SOAPHandler<SOAPMessageContext> {
 			if (bodyElement.getElementName().getLocalName().equals("imAlive")) {
 			    return true;
 			}
+			if (bodyElement.getElementName().getLocalName().equals("updateCart")) {
+			    return true;
+			}
+			if (bodyElement.getElementName().getLocalName().equals("updateShoppingResult")) {
+			    return true;
+			}
 		    }
 		}
 
